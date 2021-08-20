@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:02:54
-LastEditTime: 2021-08-20 13:31:37
+LastEditTime: 2021-08-20 13:43:19
 Description: Flask主文件
 '''
 from flask import *
@@ -18,7 +18,7 @@ from utils.sysinfo import sysinfo
 
 class RespUpload(BaseModel):
     '''上传base64图片的响应信息'''
-    code: int = 200,
+    code: int = 200
     msg: str
 
 
