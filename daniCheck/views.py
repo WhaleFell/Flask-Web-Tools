@@ -1,0 +1,91 @@
+#!/usr/bin/python python3
+# coding=utf-8
+'''
+Author: whalefall
+Date: 2021-08-20 03:12:38
+LastEditTime: 2021-08-20 10:23:39
+Description: 大沥查人视图函数
+'''
+from . import dani
+from flask import *
+from flask import jsonify, request, current_app, session, render_template, make_response
+from .utils.sql_control import Sql, Info
+from pydantic import BaseModel
+from typing import List, Dict
+import json
+
+sql = Sql()
+
+
+class Repo(BaseModel):
+    code: int = 200  # 状态码 200->成功
+    msg: str  # 信息
+    data: List[
+        Info
+    ] = []
+
+
+def resp_parse(resp):
+    '''BaseModel类型返回json'''
+    return Response(json.dumps(resp.dict(), ensure_ascii=False), mimetype='application/json')
+
+
+def request_parse(req_data):
+    '''解析请求数据并以json形式返回'''
+    if req_data.method == 'POST':
+        data = req_data.json
+    elif req_data.method == 'GET':
+        data = req_data.args
+
+    return data
+
+# 大沥查人首页
+
+# 验证session装饰器
+
+
+def login(func):
+
+    def auth(*args, **kwargs):
+        # if session.get('from') == 'index':
+        #     # Flask 要返回原函数以便路由再修饰
+        #     return func(*args, **kwargs)
+        # else:
+        #     abort(401)
+        if request.cookies.get('from') == 'index':
+            # Flask 要返回原函数以便路由再修饰
+            return func(*args, **kwargs)
+        else:
+            abort(401)
+
+    return auth
+
+
+@dani.route('/dani/', methods=['GET'])
+def index():
+    # 设置session
+    # session['from'] = 'index'
+    resp = make_response(render_template('index.html'))
+    resp.set_cookie("from", "index")
+
+    return resp
+
+# 大沥查人api接口
+
+
+@dani.route('/dani/api/', methods=['GET', 'POST'])
+@login
+def api():
+    req_data = request_parse(request)
+    name = req_data.get('name')
+    if name:
+        i = Info(student_name=name)
+        result = sql.search(i)
+        if result == []:
+            r = Repo(code=202, msg=f"{name}结果为空!")
+        else:
+            r = Repo(msg=f"{name}共有{len(result)}条结果", data=result)
+        # return jsonify(r.dict())
+        return resp_parse(r)
+
+    return resp_parse(Repo(code=201, msg="请传入name参数"))
