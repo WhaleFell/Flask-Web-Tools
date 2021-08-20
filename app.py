@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:02:54
-LastEditTime: 2021-08-20 11:48:45
+LastEditTime: 2021-08-20 13:31:37
 Description: Flask主文件
 '''
 from flask import *
@@ -67,14 +67,16 @@ def upload():
 
     return resp_parse(RespUpload(code=502, msg="无内容?"))
 
-@app.route('/sysinfo',methods=["GET"])
+
+@app.route('/sysinfo', methods=["GET"])
 def _():
     return resp_parse(sysinfo())
 
-@app.route('/',methods=['GET'])
+
+@app.route('/', methods=['GET'])
 def index():
     return render_template('index_i.html')
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True)
+    app.run(host="0.0.0.0", debug=True, port=9000)
