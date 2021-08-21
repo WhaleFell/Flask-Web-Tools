@@ -3,12 +3,12 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:02:54
-LastEditTime: 2021-08-20 13:43:19
+LastEditTime: 2021-08-21 22:45:26
 Description: Flask主文件
 '''
 from flask import *
 from daniCheck import dani
-from flask import redirect, url_for, request
+from flask import redirect, url_for, request, Response, render_template
 from pathlib import Path
 import base64
 from pydantic import BaseModel

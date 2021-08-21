@@ -3,12 +3,12 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:12:38
-LastEditTime: 2021-08-20 10:23:39
+LastEditTime: 2021-08-21 22:47:40
 Description: 大沥查人视图函数
 '''
 from . import dani
 from flask import *
-from flask import jsonify, request, current_app, session, render_template, make_response
+from flask import jsonify, request, current_app, session, render_template, make_response, Response
 from .utils.sql_control import Sql, Info
 from pydantic import BaseModel
 from typing import List, Dict
@@ -41,11 +41,9 @@ def request_parse(req_data):
 
 # 大沥查人首页
 
-# 验证session装饰器
-
 
 def login(func):
-
+    '''验证session装饰器'''
     def auth(*args, **kwargs):
         # if session.get('from') == 'index':
         #     # Flask 要返回原函数以便路由再修饰
