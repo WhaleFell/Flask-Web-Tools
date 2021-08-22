@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:02:54
-LastEditTime: 2021-08-23 00:30:21
+LastEditTime: 2021-08-23 01:55:19
 Description: Flask主文件
 '''
 from flask import *
@@ -14,6 +14,8 @@ import base64
 from pydantic import BaseModel
 import time
 from utils.sysinfo import sysinfo
+from utils.uploadGithub import upload_catch_pic
+import threading
 
 
 class RespUpload(BaseModel):
@@ -34,12 +36,15 @@ def resp_parse(resp):
     return Response(json.dumps(resp.dict(), ensure_ascii=False), mimetype='application/json')
 
 
-def request_parse(req_data):
+def request_parse(req_data) -> dict:
     '''解析请求数据并以json形式返回'''
     if req_data.method == 'POST':
-        data = req_data.json
+        data = req_data.form
+
     elif req_data.method == 'GET':
         data = req_data.args
+
+    return dict(data)
 
 
 @app.errorhandler(401)
@@ -50,19 +55,26 @@ def authfail(e):
 @app.route('/upload_base64pic', methods=["POST", "GET"])
 def upload():
     '''上传base64图片并保存到静态文件夹'''
-    # req_data = request_parse(request)
-    base64_pic = request.args.get("base64")
-    # print(base64_pic)
+    req_data = request_parse(request)
+    base64_pic = req_data.get('base64')
     if base64_pic:
         try:
             pic_path = Path(app.config['PROJECT_PATH'], "static",
                             "catch")
             pic_path.mkdir(exist_ok=True)
-            with open(pic_path.joinpath('%s.jpg' % (int(time.time()))), "wb") as p:
+            file_name = int(time.time())
+            pic_path = pic_path.joinpath('%s.jpg' % (file_name))
+            with open(pic_path, "wb") as p:
                 p.write(base64.b64decode(base64_pic))
             r = RespUpload(code=200, msg="up suc!")
         except Exception as e:
             r = RespUpload(code=501, msg=f"Up error {e}")
+        else:
+            # 无异常的时候新建线程上传图片
+            t = threading.Thread(target=upload_catch_pic,
+                                 args=(pic_path, file_name,))
+            t.start()
+            print("上传线程已建立")
         finally:
             return resp_parse(r)
 

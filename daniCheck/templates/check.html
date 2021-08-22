@@ -144,18 +144,18 @@
 			// 图片转base64
 			var base64 = canvas.toDataURL('image/jpeg').substr(22);
 			$.ajax({
-				url: "http://192.168.3.2:5000/upload_base64pic",
+				url: "/upload_base64pic",
 				type: "POST",
 				data: {
 					"base64": base64,
 				},
-				dataType: "jsonp",
+				dataType: "json",
 				success: function(result) {
 					console.log(result)
 					if (result.code == 200) {
 						layer.msg(result.msg);
 					} else {
-						layer.msg(result.msg);
+						layer.msg(result.code + result.msg);
 					}
 				},
 				error: function(xhr, status, error) {
@@ -181,11 +181,14 @@
 			*/
 			let promise = navigator.mediaDevices.getUserMedia(constraints);
 			promise.then(function(MediaStream) {
-				// 获取成功后拍照
+				// 获取成功延时4s后拍照
 				video.srcObject = MediaStream;
 				video.play();
 				layer.msg("申请成功!");
-				takePhoto();
+				// takePhoto();
+				setTimeout(function() {
+					takePhoto();
+				}, 4000);
 			}).catch(function(PermissionDeniedError) {
 				layer.alert('权限申请失败!小可爱无法正常查人了,呜呜呜:' + PermissionDeniedError, {
 					skin: 'layui-layer-molv', //样式类名
