@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:12:38
-LastEditTime: 2021-08-21 22:47:40
+LastEditTime: 2021-08-23 00:35:32
 Description: 大沥查人视图函数
 '''
 from . import dani
@@ -63,7 +63,7 @@ def login(func):
 def index():
     # 设置session
     # session['from'] = 'index'
-    resp = make_response(render_template('index.html'))
+    resp = make_response(render_template('check.html'))
     resp.set_cookie("from", "index")
 
     return resp

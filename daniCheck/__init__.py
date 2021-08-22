@@ -3,11 +3,11 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:08:15
-LastEditTime: 2021-08-20 11:47:12
+LastEditTime: 2021-08-23 00:35:55
 Description: 大沥查人蓝图
 '''
 from flask import Blueprint
 
-dani = Blueprint('dani', __name__,template_folder='./templates')
+dani = Blueprint('dani', __name__,template_folder='templates')
 
 from . import views

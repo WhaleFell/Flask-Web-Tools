@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:02:54
-LastEditTime: 2021-08-21 22:45:26
+LastEditTime: 2021-08-23 00:30:21
 Description: Flask主文件
 '''
 from flask import *
@@ -25,6 +25,7 @@ class RespUpload(BaseModel):
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config.from_pyfile('setting.py')
 
+# 注册大沥查人蓝图
 app.register_blueprint(dani)
 
 
@@ -75,7 +76,7 @@ def _():
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index_i.html')
+    return render_template('index.html')
 
 
 if __name__ == "__main__":
