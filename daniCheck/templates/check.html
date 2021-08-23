@@ -17,6 +17,7 @@
 
 		<!-- 引入 layui.js -->
 		<script src="https://www.layuicdn.com/layui/layui.js"></script>
+		<!-- <script src="https://cdn.jsdelivr.net/gh/snapappointments/bootstrap-select/js/bootstrap-select.js"></script> -->
 
 		<meta name="referrer" content="never">
 
@@ -27,11 +28,20 @@
 				<div class="panel-heading">
 
 					<h2 class="panel-title text-center">大沥高中查人系统</h2>
+
 					<img id="head-img" style="display: none;" src="https://q1.qlogo.cn/g?b=qq&nk=2734184475&s=640"
 						class="img-circle center-block" alt="Cinque Terre" width="50" height="50">
 				</div>
 				<div class="panel-body">
-					<h3 class="text-center text-success">按名字查询(支持模糊)</h3>
+					<p class="text-center text-success" style="font-size: 18px;">选择查询模式:
+						<select class="selectpicker">
+							<option value="1">按名字查人(支持模糊)</option>
+							<option value="2">按拼音缩写查人</option>
+							<option value="3">按生日查人</option>
+						</select>
+					</p>
+					
+					<br />
 
 					<div class="input-group">
 						<input type="text" class="form-control" id="input-name">
@@ -65,7 +75,7 @@
 					</div> -->
 					<!-- 查询结果接口容器 -->
 					<ul class="list-group" id="add">
-						
+
 					</ul>
 
 					<!-- 拍照用 -->
@@ -145,9 +155,9 @@
 					};
 
 				},
-				error:function(xhr,status,error){
+				error: function(xhr, status, error) {
 					$("#error-msg").show(1000);
-					$("#msg").text("后端接口异常:"+status+error);
+					$("#msg").text("后端接口异常:" + status + error);
 				}
 			});
 
