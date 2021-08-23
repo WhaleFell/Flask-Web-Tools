@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-23 01:05:26
-LastEditTime: 2021-08-23 01:57:30
+LastEditTime: 2021-08-23 15:29:58
 Description: 上传抓拍到的文件到GitHub
 '''
 import setting
@@ -15,6 +15,7 @@ import json
 import time
 import os
 import sys
+# 上层路径导入
 sys.path.append("..")
 
 

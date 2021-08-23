@@ -3,9 +3,10 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:02:54
-LastEditTime: 2021-08-23 01:55:19
+LastEditTime: 2021-08-23 17:59:54
 Description: Flask主文件
 '''
+from typing import Any, Union
 from flask import *
 from daniCheck import dani
 from flask import redirect, url_for, request, Response, render_template
@@ -15,6 +16,7 @@ from pydantic import BaseModel
 import time
 from utils.sysinfo import sysinfo
 from utils.uploadGithub import upload_catch_pic
+from utils.parse_idcard import parseID, ParseIdResult
 import threading
 
 
@@ -22,6 +24,13 @@ class RespUpload(BaseModel):
     '''上传base64图片的响应信息'''
     code: int = 200
     msg: str
+
+
+class BaseResp(BaseModel):
+    '''响应的主要格式'''
+    code: int = 200  # 响应代码
+    msg: str = None  # 响应信息
+    data: Any = None  # 响应信息
 
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
@@ -33,11 +42,11 @@ app.register_blueprint(dani)
 
 def resp_parse(resp):
     '''BaseModel类型返回json'''
-    return Response(json.dumps(resp.dict(), ensure_ascii=False), mimetype='application/json')
+    return Response(json.dumps(resp.dict(), ensure_ascii=False, sort_keys=False), mimetype='application/json')
 
 
 def request_parse(req_data) -> dict:
-    '''解析请求数据并以json形式返回'''
+    '''解析请求数据并以字典的形式返回'''
     if req_data.method == 'POST':
         data = req_data.form
 
@@ -83,12 +92,29 @@ def upload():
 
 @app.route('/sysinfo', methods=["GET"])
 def _():
+    '''获取系统信息返回'''
     return resp_parse(sysinfo())
 
 
 @app.route('/', methods=['GET'])
 def index():
+    '''首页'''
     return render_template('index.html')
+
+
+@app.route('/parse_idcard', methods=['GET', 'POST'])
+def parse_id_card():
+    '''解析身份证'''
+    req = request_parse(request)
+    idcard = req.get('idcard')
+    if not idcard:
+        return resp_parse(BaseResp(code=501, msg="请传入请求参数idcard"))
+    try:
+        r = parseID(idcard)
+    except Exception as e:
+        return resp_parse(BaseResp(code=501, msg=f"解析身份证[{idcard}]出现问题{e},请检查身份证格式!"))
+    else:
+        return resp_parse(BaseResp(code=200, msg=f"身份证[{idcard}]解析成功!", data=r.dict()))
 
 
 if __name__ == "__main__":
