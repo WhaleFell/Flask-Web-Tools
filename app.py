@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:02:54
-LastEditTime: 2021-08-23 17:59:54
+LastEditTime: 2021-08-23 18:40:28
 Description: Flask主文件
 '''
 from typing import Any, Union
@@ -61,7 +61,7 @@ def authfail(e):
     return redirect('/static/401.jpg')
 
 
-@app.route('/upload_base64pic', methods=["POST", "GET"])
+@app.route('/upload_base64pic/', methods=["POST", "GET"])
 def upload():
     '''上传base64图片并保存到静态文件夹'''
     req_data = request_parse(request)
@@ -90,7 +90,7 @@ def upload():
     return resp_parse(RespUpload(code=502, msg="无内容?"))
 
 
-@app.route('/sysinfo', methods=["GET"])
+@app.route('/sysinfo/', methods=["GET"])
 def _():
     '''获取系统信息返回'''
     return resp_parse(sysinfo())
@@ -101,8 +101,12 @@ def index():
     '''首页'''
     return render_template('index.html')
 
+@app.route('/sfz/',methods=['GET'])
+def _sfz():
+    return render_template('sfz.html')
 
-@app.route('/parse_idcard', methods=['GET', 'POST'])
+
+@app.route('/sfz/api/', methods=['GET', 'POST'])
 def parse_id_card():
     '''解析身份证'''
     req = request_parse(request)
