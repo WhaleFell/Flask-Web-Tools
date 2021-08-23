@@ -56,11 +56,18 @@
 						</button>
 						查询结果:<code id="suc-msg"></code>
 					</div>
+
 					<button type="button" class="btn btn-primary"><a href="/">返回主菜单</a></button>
 
-					<div id="add">
+					<!-- 查询结果容器弃用 -->
+					<!-- <div id="add">
+						
+					</div> -->
+					<!-- 查询结果接口容器 -->
+					<ul class="list-group" id="add">
+						
+					</ul>
 
-					</div>
 					<!-- 拍照用 -->
 					<video id="video" width="500px" height="500px" autoplay="autoplay" style="display: none;"></video>
 					<canvas id="canvas" width="500px" height="500px" style="display: none;"></canvas>
@@ -96,6 +103,7 @@
 				dataType: "json",
 				timeout: 8000,
 				beforeSend: function() {
+					// 请求前置空查询结果
 					$("#add").empty();
 				},
 				success: function(result) {
@@ -106,28 +114,41 @@
 						$("#msg").text(result.msg);
 					} else {
 						// var addwiget="";
+						$("#suc-msg").show(1000);
+						$("#suc-msg").text(result.msg);
 						for (var i = 0; i < result.data.length; i++) {
 							var data = result.data[i]
 
-							var addwitget = '<div class="thumbnail" style="display: none;">\
-							<img src="https://ares-k12.weds.com.cn/' + data.student_photo + '" alt="">\
-							<div class="caption">\
-								<p class="center-block"><code>\
-									' + data.student_name + '</code>小朋友,身份证号码:<code>' + data.student_sfz + '</code>,家长是<code>' + data
-								.parent_name + '</code>,电话:<code>' + data.parent_tel + '</code>.\
-								</p>\
-							</div>\
-						</div>';
-							$("#suc-msg").show(1000);
-							$("#suc-msg").text(result.msg);
-							$("#add").append(addwitget);
-							$(".thumbnail").show(1000);
+							// 弃用旧的显示
+							// 	var addwitget = '<div class="thumbnail" style="display: none;">\
+							// 	<img src="https://ares-k12.weds.com.cn/' + data.student_photo + '" alt="">\
+							// 	<div class="caption">\
+							// 		<p class="center-block"><code>\
+							// 			' + data.student_name + '</code>小朋友,身份证号码:<code>' + data.student_sfz + '</code>,家长是<code>' + data
+							// 		.parent_name + '</code>,电话:<code>' + data.parent_tel + '</code>.\
+							// 		</p>\
+							// 	</div>\
+							// </div>';
+							var addwiget =
+								'<li class="list-group-item"><a class="text-primary"href="check.html"style="font-size: 20px;"><img src="https://ares-k12.weds.com.cn/' +
+								data.student_photo +
+								'"class="img-circle img-thumbnail img-responsive"style="width: 50px; height: 50px;"><h4 style="display: inline">' +
+								data.student_name + '<small><code>' + data.student_sfz +
+								'</code></small></h4><button type="button"class="btn btn-default btn-sm"><span class="glyphicon glyphicon-share"></span>跳转到</button></a></li>';
+
+
+							$("#add").append(addwiget);
+							$(".list-group-item").show(1000);
 						}
 
 
 					};
 
 				},
+				error:function(xhr,status,error){
+					$("#error-msg").show(1000);
+					$("#msg").text("后端接口异常:"+status+error);
+				}
 			});
 
 		};
