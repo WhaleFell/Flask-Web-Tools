@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-19 18:46:02
-LastEditTime: 2021-08-20 04:53:34
+LastEditTime: 2021-08-24 02:49:57
 Description: 数据库操作
 '''
 from pathlib import Path
@@ -31,7 +31,7 @@ class Sql(object):
 
     def __init__(self) -> None:
         db_path = Path().joinpath(PROJECT_PATH, 'db', 'data.db')
-        self.conn = sqlite3.connect(db_path, check_same_thread=False)
+        self.conn = sqlite3.connect(str(db_path), check_same_thread=False)
         self.curson = self.conn.cursor()
         self.start()
 
