@@ -3,13 +3,13 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:12:38
-LastEditTime: 2021-08-23 00:35:32
+LastEditTime: 2021-08-24 23:07:46
 Description: 大沥查人视图函数
 '''
 from . import dani
 from flask import *
 from flask import jsonify, request, current_app, session, render_template, make_response, Response
-from .utils.sql_control import Sql, Info
+from .utils_daniCheck.sql_control import Sql, Info
 from pydantic import BaseModel
 from typing import List, Dict
 import json
@@ -27,7 +27,7 @@ class Repo(BaseModel):
 
 def resp_parse(resp):
     '''BaseModel类型返回json'''
-    return Response(json.dumps(resp.dict(), ensure_ascii=False), mimetype='application/json')
+    return Response(json.dumps(resp.dict(), ensure_ascii=False, sort_keys=False), mimetype='application/json')
 
 
 def request_parse(req_data):

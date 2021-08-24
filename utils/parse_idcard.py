@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-23 15:08:21
-LastEditTime: 2021-08-23 17:37:35
+LastEditTime: 2021-08-25 02:05:12
 Description: 中国居民身份证解析模块
 '''
 
@@ -12,16 +12,28 @@ from pathlib import Path
 import pandas
 from pydantic import BaseModel
 import datetime
+from typing import Union
 
 
 class ParseIdResult(BaseModel):
     '''解析返回的数据'''
     where: str = "地球"  # 身份证归属地
     born: str = None  # 出生日期格式 xxxx年xx月xx日
-    age: float = None  # 当前年龄(保留两位小数,单位岁)
-    sex: str = "无性别"
+    age: Union[float, str] = None  # 当前年龄(保留两位小数,单位岁)
+    sex: str = None
     starType: str = None  # 星座
     shuxian: str = None  # 属相
+
+# 防止函数错误的装饰器
+
+
+def dontreturn(func):
+    def inner(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            return None
+    return inner
 
 
 class GetInformation(object):
@@ -33,12 +45,16 @@ class GetInformation(object):
         self.birth_month = self.id[10:12]
         self.birth_day = self.id[12:14]
 
+    @dontreturn
     def get_birthday(self):
         """通过身份证号获取出生日期"""
         birthday = "{0}-{1}-{2}".format(self.birth_year,
                                         self.birth_month, self.birth_day)
+        dataclass = datetime.datetime.strptime(
+            birthday, "%Y-%m-%d")
         return birthday
 
+    @dontreturn
     def get_sex(self):
         """男生：1 女生：2"""
         num = int(self.id[16:17])
@@ -47,6 +63,7 @@ class GetInformation(object):
         else:
             return "男"
 
+    @dontreturn
     def get_age(self) -> float:
         """通过身份证号获取年龄"""
         birthday = self.get_birthday()
@@ -57,6 +74,7 @@ class GetInformation(object):
         age = round(float(d/365), 2)
         return age
 
+    @dontreturn
     def get_star(self) -> str:
         '''获取星座'''
         month = int(self.birth_month)
@@ -69,9 +87,9 @@ class GetInformation(object):
         else:
             return constellations[month]
 
+    @dontreturn
     def zodiacYear(self):
         '''根据年份获取属相'''
-
         zodiacs = ['猴', '鸡', '狗', '猪', '鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊']
         year = self.birth_year
         n = int(year) % 12
@@ -97,7 +115,7 @@ def parseID(idcard: str) -> ParseIdResult:
         where = data['province'].to_string(
             index=None)+data['city'].to_string(index=None)+data["county"].to_string(index=None)
     except Exception as e:
-        where = None
+        where = "地球"
         print("获取归属地错误!", e)
 
     r = {
@@ -110,11 +128,11 @@ def parseID(idcard: str) -> ParseIdResult:
     }
 
     return ParseIdResult(**r)
-    
 
 
 if __name__ == "__main__":
     # parseID("440605200602050172")
-    id = "440605200602050172"
+    id = "440605200"
     # print(GetInformation(id).zodiacYear())
-    parseID(id)
+
+    print(parseID(id).dict())
