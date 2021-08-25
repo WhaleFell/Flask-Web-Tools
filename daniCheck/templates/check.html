@@ -33,15 +33,15 @@
 						class="img-circle center-block" alt="Cinque Terre" width="50" height="50">
 				</div>
 				<div class="panel-body">
-					
+
 					<p class="text-center text-success" style="font-size: 18px;">选择查询模式:
-						<select class="selectpicker">
-							<option value="1">按名字查人(支持模糊)</option>
-							<option value="2">按拼音缩写查人</option>
-							<option value="3">按生日查人</option>
+						<select class="selectpicker" id="select">
+							<option value="name">按名字查人(支持模糊)</option>
+							<option value="pyname">按拼音缩写查人</option>
+							<option value="born">按生日查人</option>
 						</select>
 					</p>
-					
+
 					<br />
 
 					<div class="input-group">
@@ -103,25 +103,27 @@
 		});
 
 		function search() {
-			var name = $("#input-name").val();
-
+			var value = $("#input-name").val();
+			var type = $("#select").val();
 			$.ajax({
 				url: api,
 				type: "get",
 				data: {
-					"name": name
+					"type": type,
+					"value": value,
 				},
 				dataType: "json",
 				timeout: 8000,
 				beforeSend: function() {
 					// 请求前置空查询结果
+					$('#add').hide();
 					$("#add").empty();
 				},
 				success: function(result) {
 					console.log(result)
 					// console.log(result.code)
 					if (result.code != 200) {
-						$("#error-msg").show(1000);
+						$("#error-msg").show(1000,"swing");
 						$("#msg").text(result.msg);
 					} else {
 						// var addwiget="";
@@ -149,7 +151,7 @@
 
 
 							$("#add").append(addwiget);
-							$("#list-group-item").show(1000);
+							$("#add").show(1000,"swing");
 						}
 
 

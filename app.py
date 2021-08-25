@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:02:54
-LastEditTime: 2021-08-23 18:40:28
+LastEditTime: 2021-08-25 11:51:42
 Description: Flask主文件
 '''
 from typing import Any, Union
@@ -101,7 +101,8 @@ def index():
     '''首页'''
     return render_template('index.html')
 
-@app.route('/sfz/',methods=['GET'])
+
+@app.route('/sfz/', methods=['GET'])
 def _sfz():
     return render_template('sfz.html')
 
