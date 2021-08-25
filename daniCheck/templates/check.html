@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>沥高查人系统</title>
+		<title>陈煜翔香香-沥高查人系统</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<!-- 新 Bootstrap 核心 CSS 文件 -->
 		<link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -27,9 +27,9 @@
 			<div class="panel panel-info">
 				<div class="panel-heading">
 
-					<h2 class="panel-title text-center">大沥高中查人系统</h2>
+					<h2 class="panel-title text-center">陈煜翔香香-沥高查人系统</h2>
 
-					<img id="head-img" style="display: none;" src="https://q1.qlogo.cn/g?b=qq&nk=2734184475&s=640"
+					<img id="head-img" style="display: none;" src="https://q1.qlogo.cn/g?b=qq&nk=1799262301&s=640"
 						class="img-circle center-block" alt="Cinque Terre" width="50" height="50">
 				</div>
 				<div class="panel-body">
@@ -51,7 +51,18 @@
 						</span>
 					</div><!-- /input-group -->
 					<br>
-
+					
+					<!-- 公告信息提示框 -->
+					<div class="alert alert-info alert-dismissable">
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+							&times;
+						</button>
+						<p>1. 本系统可以查询大沥高中2021届高一的学生信息！</p>
+						<p>2. 数据来自网上公开信息采集，包含图片。</p>
+						<p>3. 本系统仅供认识新同学使用，相互了解增进友情，不得用于非法人肉他人。非法用途制作者不承担法律责任。</p>
+						<p>3. 本系统一切责任人为陈煜翔(香香)。如有疑问请咨询：QQ：1799262301</p>
+					</div>
+					
 					<!-- 查询错误信息警告框 -->
 					<div class="alert alert-danger alert-dismissable" id='error-msg' style="display: none;">
 						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
@@ -143,7 +154,7 @@
 							// 	</div>\
 							// </div>';
 							var addwiget =
-								'<li class="list-group-item"><a class="text-primary"href="check.html"style="font-size: 20px;"><img src="https://ares-k12.weds.com.cn/' +
+								'<li class="list-group-item"><a class="text-primary"href="/dani/'+data.student_sfz+'"/target=_blank;style="font-size: 20px;"><img src="https://ares-k12.weds.com.cn/' +
 								data.student_photo +
 								'"class="img-circle img-thumbnail img-responsive"style="width: 50px; height: 50px;"><h4 style="display: inline">' +
 								data.student_name + '<small><code>' + data.student_sfz +

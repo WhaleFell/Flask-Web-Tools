@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-19 18:46:02
-LastEditTime: 2021-08-25 11:38:48
+LastEditTime: 2021-08-25 12:49:02
 Description: 数据库操作
 '''
 from pathlib import Path
@@ -91,7 +91,8 @@ CREATE TABLE IF NOT EXISTS info (
         switch = {
             "name": f"SELECT * FROM info WHERE student_name LIKE '%{info.student_name}%';",
             "born": f"SELECT * FROM info WHERE student_born='{info.student_born}';",
-            "pyname": f"SELECT * FROM info WHERE student_pyname='{info.student_pyname}';"
+            "pyname": f"SELECT * FROM info WHERE student_pyname='{info.student_pyname}';",
+            "sfz": f"SELECT * FROM info WHERE student_sfz='{info.student_sfz}';",
         }
         sql = switch.get(type)
         if not sql:

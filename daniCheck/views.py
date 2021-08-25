@@ -3,16 +3,21 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:12:38
-LastEditTime: 2021-08-25 11:37:52
+LastEditTime: 2021-08-25 13:35:20
 Description: 大沥查人视图函数
 '''
-from . import dani
-from flask import *
-from flask import jsonify, request, current_app, session, render_template, make_response, Response
-from .utils_daniCheck.sql_control import Sql, Info
-from pydantic import BaseModel
-from typing import List, Dict
+import os
+import sys
+sys.path.append(os.getcwd())
 import json
+from typing import List, Dict
+from pydantic import BaseModel
+from .utils_daniCheck.sql_control import Sql, Info
+from flask import jsonify, request, current_app, session, render_template, make_response, Response, abort
+from flask import *
+from . import dani
+from utils.parse_idcard import parseID
+
 
 sql = Sql()
 
@@ -80,7 +85,8 @@ def api():
     switch = {
         "name": Info(student_name=value),
         "born": Info(student_born=value),
-        "pyname": Info(student_pyname=value)
+        "pyname": Info(student_pyname=value),
+        "sfz": Info(student_sfz=value),
     }
 
     if value:
@@ -99,3 +105,19 @@ def api():
         return resp_parse(r)
 
     return resp_parse(Repo(code=201, msg="请传入value参数"))
+
+
+@dani.route('/dani/<idcard>/', methods=['GET'])
+def more(idcard):
+    '''学生详细页视图,调用身份证查询'''
+    i = Info(student_sfz=idcard)
+    r = sql.search(i,type="sfz")
+    if r == []:
+        abort(404)
+    r_p = parseID(idcard)
+    kw = {
+        "info": r[0].dict(),
+        "info2":r_p.dict()
+    }
+    print(kw)
+    return render_template('more.html', **kw)
