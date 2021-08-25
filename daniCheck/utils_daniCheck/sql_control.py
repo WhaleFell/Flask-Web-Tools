@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-19 18:46:02
-LastEditTime: 2021-08-25 01:59:28
+LastEditTime: 2021-08-25 11:38:48
 Description: 数据库操作
 '''
 from pathlib import Path
@@ -16,6 +16,7 @@ from typing import Optional, Union
 class Info(BaseModel):
     student_sfz: Optional[str]
     student_name: Optional[str]
+    student_pyname: Optional[str]
     student_where: Optional[str]
     student_born: Optional[str]
     student_class: Union[int, str] = None
@@ -44,6 +45,7 @@ class Sql(object):
 CREATE TABLE IF NOT EXISTS info (
     student_sfz TEXT PRIMARY KEY NOT NULL,
     student_name TEXT NOT NULL,
+    student_py TEXT NULL,
     student_where TEXT NULL,
     student_born TEXT NULL,
     student_class INT NULL,
@@ -84,11 +86,17 @@ CREATE TABLE IF NOT EXISTS info (
         except Exception as e:
             print(f"更新数据库时出错:{e}")
 
-    def search(self, info: Info):
-        '''查询语句'''
-        sql = f'''
-        SELECT * FROM info WHERE student_name LIKE '%{info.student_name}%';
-        '''
+    def search(self, info: Info, type="name"):
+        '''查询语句,支持类型查询,默认名字'''
+        switch = {
+            "name": f"SELECT * FROM info WHERE student_name LIKE '%{info.student_name}%';",
+            "born": f"SELECT * FROM info WHERE student_born='{info.student_born}';",
+            "pyname": f"SELECT * FROM info WHERE student_pyname='{info.student_pyname}';"
+        }
+        sql = switch.get(type)
+        if not sql:
+            sql = switch['name']
+
         try:
             self.curson.execute(sql)
             # self.curson.fetchall()
@@ -99,12 +107,13 @@ CREATE TABLE IF NOT EXISTS info (
                 d = Info(
                     student_sfz=data[0],
                     student_name=data[1],
-                    student_where=data[2],
-                    student_born=data[3],
-                    student_class=data[4],  # 可选参数,不传入时默认none
-                    student_photo=data[5],
-                    parent_name=data[6],
-                    parent_tel=data[7]
+                    student_pyname=data[2],
+                    student_where=data[3],
+                    student_born=data[4],
+                    student_class=data[5],  # 可选参数,不传入时默认none
+                    student_photo=data[6],
+                    parent_name=data[7],
+                    parent_tel=data[8]
                 )
                 l.append(d)
             # print(l)
@@ -129,6 +138,21 @@ WHERE
         except Exception as e:
             print(f"{info}更新数据库时出错:{e}")
 
+    def addPyname(self, info: Info):
+        '''增加拼音'''
+        sql = f'''
+    UPDATE info
+SET student_pyname = '{info.student_pyname}'
+WHERE
+	student_sfz = '{info.student_sfz}';
+    '''
+        try:
+            self.curson.execute(sql)
+            self.conn.commit()
+            print(f"更新成功{info}")
+        except Exception as e:
+            print(f"{info}更新数据库时出错:{e}")
+
     def __del__(self) -> None:
         print(f"数据库操作:{self.conn.total_changes}行,正在关闭ing")
         self.conn.close()
@@ -138,5 +162,6 @@ if __name__ == '__main__':
     # print(PROJECT_PATH)
     sqlbot = Sql()
     # print(Path.cwd())
-    i = Info(student_sfz=441224200512252924, student_where="11", student_born="111")
+    i = Info(student_sfz=441224200512252924,
+             student_where="11", student_born="111")
     print(sqlbot.search(Info(student_name="黄")))

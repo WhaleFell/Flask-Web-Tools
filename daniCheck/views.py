@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:12:38
-LastEditTime: 2021-08-24 23:07:46
+LastEditTime: 2021-08-25 11:37:52
 Description: 大沥查人视图函数
 '''
 from . import dani
@@ -75,15 +75,27 @@ def index():
 @login
 def api():
     req_data = request_parse(request)
-    name = req_data.get('name')
-    if name:
-        i = Info(student_name=name)
-        result = sql.search(i)
+    value = req_data.get('value')
+    search_type = req_data.get('type')
+    switch = {
+        "name": Info(student_name=value),
+        "born": Info(student_born=value),
+        "pyname": Info(student_pyname=value)
+    }
+
+    if value:
+        i = switch.get(search_type)
+        if not i:
+            search_type = "name"
+            i = switch.get('name')
+
+        result = sql.search(i, type=search_type)
         if result == []:
-            r = Repo(code=202, msg=f"{name}结果为空!")
+            r = Repo(code=202, msg=f"按{search_type}查{value}结果为空!")
         else:
-            r = Repo(msg=f"{name}共有{len(result)}条结果", data=result)
+            r = Repo(
+                msg=f"按{search_type}查{value}共有{len(result)}条结果", data=result)
         # return jsonify(r.dict())
         return resp_parse(r)
 
-    return resp_parse(Repo(code=201, msg="请传入name参数"))
+    return resp_parse(Repo(code=201, msg="请传入value参数"))

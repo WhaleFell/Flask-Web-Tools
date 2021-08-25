@@ -3,20 +3,21 @@
 '''
 Author: whalefall
 Date: 2021-08-24 12:56:11
-LastEditTime: 2021-08-25 02:04:04
+LastEditTime: 2021-08-25 11:36:04
 Description: 数据库整理程序.
 '''
-from utils_daniCheck.sql_control import Sql, Info
-from utils.parse_idcard import parseID
-import httpx
-from pathlib import Path
-import re
-from typing import Union
-from retrying import retry
-import sqlite3
 import os
 import sys
 sys.path.append(os.getcwd())
+import sqlite3
+from retrying import retry
+from typing import Union
+import re
+from pathlib import Path
+import httpx
+from utils.parse_idcard import parseID
+from utils_daniCheck.sql_control import Sql, Info
+from pypinyin import pinyin
 
 # 数据库绝对路径
 DB_PATH = Path(os.path.dirname(__file__)).joinpath('db/data.db')
@@ -70,5 +71,37 @@ def main():
         sqlbot.addWhere(i)
 
 
+def get_pyname(name):
+    '''传入名字获取名字拼音缩写'''
+    import pypinyin
+    result = pypinyin.pinyin(name, style=pypinyin.NORMAL)
+    return ''.join([i[0][0] for i in result])
+
+
+def mianPyname():
+    '''增加拼音名字'''
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    sql = '''
+    SELECT student_sfz,student_name FROM info;
+    '''
+    cursor.execute(sql)
+    sqlbot = Sql()
+    for data in cursor.fetchall():
+        sfz = data[0]
+        name = data[1]
+
+        try:
+            pyname = get_pyname(name)
+        except Exception as e:
+            pyname = None
+            print(f"{sfz}处理失败:{e}")
+
+        i = Info(student_sfz=sfz, student_pyname=pyname)
+        sqlbot.addPyname(i)
+
+
 if __name__ == '__main__':
-    main()
+    # main()
+    # print(get_pyname('黄颖怡'))
+    mianPyname()
