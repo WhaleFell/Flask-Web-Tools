@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-23 15:08:21
-LastEditTime: 2021-08-25 02:05:12
+LastEditTime: 2021-08-26 17:49:12
 Description: 中国居民身份证解析模块
 '''
 
@@ -24,10 +24,11 @@ class ParseIdResult(BaseModel):
     starType: str = None  # 星座
     shuxian: str = None  # 属相
 
-# 防止函数错误的装饰器
+
 
 
 def dontreturn(func):
+    '''防止函数错误的装饰器'''
     def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)

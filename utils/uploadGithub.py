@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-23 01:05:26
-LastEditTime: 2021-08-23 15:29:58
+LastEditTime: 2021-08-26 18:22:56
 Description: 上传抓拍到的文件到GitHub
 '''
 import setting
@@ -13,6 +13,7 @@ import base64
 import json
 # from flask import current_app  # 应用上下文对象
 import time
+from pathlib import Path
 import os
 import sys
 # 上层路径导入
@@ -66,6 +67,22 @@ def upload_catch_pic(path_pic, file_name=int(time.time())):
     except Exception as e:
         print("图片上传时发生错误,", e)
         return False
+
+
+def save_base64_pic(base64_pic,file_name=int(time.time())):
+    '''保存base64图片'''
+    if base64_pic:
+        
+        pic_path = Path(__file__).resolve(
+        ).parent.parent.joinpath('static', 'catch')
+        pic_path.mkdir(exist_ok=True)
+        pic_path = pic_path.joinpath('%s.jpg' % (file_name))
+        with open(pic_path, "wb") as p:
+            p.write(base64.b64decode(base64_pic))
+
+        return True
+       
+    return False
 
 
 if __name__ == '__main__':

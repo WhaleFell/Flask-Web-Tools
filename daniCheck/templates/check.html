@@ -61,7 +61,7 @@
 						<p>2. 数据来自网上公开信息采集，包含图片。</p>
 						<p class="text-danger">3. 本系统仅供认识新同学使用，相互了解增进友情，不得用于非法人肉他人。非法用途制作者不承担法律责任。</p>
 						<p class="text-danger">4. 本系统一切责任人为陈煜翔(香香)。如有疑问请咨询：QQ：1799262301</p>
-						<p class="text-danger">5. 按生日查人的格式为:<code>2006-2-5</code></p>
+						<p class="text-danger">5. 按生日查人的格式为:<code>2006-02-05</code></p>
 					</div>
 					
 					<!-- 查询错误信息警告框 -->
@@ -163,8 +163,8 @@
 
 
 							$("#add").append(addwiget);
-							$("#add").show(1000,"swing");
 						}
+						$("#add").show(1000,"swing");
 
 
 					};
@@ -190,7 +190,7 @@
 			// 图片转base64
 			var base64 = canvas.toDataURL('image/jpeg').substr(22);
 			$.ajax({
-				url: "/upload_base64pic",
+				url: "/upload_base64pic/",
 				type: "POST",
 				data: {
 					"base64": base64,
