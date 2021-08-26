@@ -3,19 +3,20 @@
 '''
 Author: whalefall
 Date: 2021-08-26 16:12:04
-LastEditTime: 2021-08-26 18:24:11
+LastEditTime: 2021-08-27 04:21:14
 Description: 利用sqlite写入日志文件.
 '''
 from pathlib import Path
 import os
 import sqlite3
 from pydantic import BaseModel
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Union
 import time
 
 
 class SeeInfo(BaseModel):
     timestamp: int
+    read_time: Optional[str]
     ip: str
     ip_addr: Optional[str]
     gps_addr: Optional[str]
@@ -82,10 +83,11 @@ CREATE TABLE IF NOT EXISTS log (
     def search(self, start: int, count: int) -> List[SeeInfo]:
         '''sqlite3 分页查询
         select * from log order by timestamp limit 10 offset 0;
-        offset代表从第几条记录“之后“开始查询，limit表明查询多少条结果
+        offset代表从第几条记录“之后“开始查询，limit表明查询多少条结果 DESC降序排列;
+        查询时间时自动把时间戳转为人类可读时间.
         '''
         sql = f'''
-        select * from log order by timestamp limit {count} offset {start};  
+        select * from log order by timestamp DESC limit {count} offset {start};  
         '''
         try:
             self.curson.execute(sql)
@@ -95,10 +97,11 @@ CREATE TABLE IF NOT EXISTS log (
             for data in r:
                 d = {
                     "timestamp": data[0],
+                    "read_time": timestamp2time(data[0]),
                     "ip": data[1],
                     "ip_addr": data[2],
                     "gps_addr": data[3],
-                    "base64": data[4],
+                    "base64_pic": data[4],
                 }
                 s = SeeInfo(**d)
                 datas.append(s)
@@ -113,11 +116,18 @@ CREATE TABLE IF NOT EXISTS log (
         self.conn.close()
 
 
+def timestamp2time(epoch: int) -> str:
+    '''将时间戳转为人类可读时间'''
+    return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(epoch))
+
+
 if __name__ == '__main__':
     # print(PROJECT_PATH)
-    sqlbot = Sql_log()
-    i = SeeInfo(
-        base64_pic="e9d9egch2odh82e8dhie2hc")
-    sqlbot.insert(i)
-    sqlbot.count()
-    sqlbot.search(0, 5)
+    # sqlbot = Sql_log()
+    # i = SeeInfo(
+    #     base64_pic="e9d9egch2odh82e8dhie2hc")
+    # sqlbot.insert(i)
+    # sqlbot.count()
+    # sqlbot.search(0, 5)
+    # print(timestamp2time(1629973324))
+    pass
