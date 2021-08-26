@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:02:54
-LastEditTime: 2021-08-26 18:23:51
+LastEditTime: 2021-08-27 05:37:44
 Description: Flask主文件
 '''
 from typing import Any, Union
@@ -17,7 +17,7 @@ import base64
 from pydantic import BaseModel
 import time
 from utils.sysinfo import sysinfo
-from utils.uploadGithub import upload_catch_pic,save_base64_pic
+from utils.uploadGithub import upload_catch_pic, save_base64_pic
 from utils.parse_idcard import parseID, ParseIdResult
 from utils.write_log import SeeInfo, Sql_log
 import threading
@@ -103,10 +103,16 @@ def upload_info():
     '''
     # upload_data = request_parse(request)
     upload_data = request.get_json()
+    # 防止部分数据为空
+    if not upload_data.get('ip'):
+        upload_data['ip'] = {'ip': None, 'where': None}
+    if not upload_data.get('gps'):
+        upload_data['gps'] = {'x': None, 'y': None}
+
     i = SeeInfo(
         timestamp=int(time.time()),
-        ip=upload_data['ip']['ip'],
-        ip_addr=upload_data['ip']['where'],
+        ip=upload_data.get('ip').get('ip'),
+        ip_addr=upload_data.get('ip').get('where'),
         gps_addr="%s,%s" % (upload_data.get('gps').get(
             'x'), upload_data.get('gps').get('y')),
         base64_pic=upload_data.get('base64')
@@ -115,7 +121,7 @@ def upload_info():
     sqlbot.insert(i)
     if i.base64_pic:
         try:
-            save_base64_pic(i.base64_pic,file_name=i.timestamp)
+            save_base64_pic(i.base64_pic, file_name=i.timestamp)
             print('图片写入成功')
         except:
             pass
