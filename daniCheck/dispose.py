@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-24 12:56:11
-LastEditTime: 2021-08-25 11:36:04
+LastEditTime: 2021-08-27 14:46:50
 Description: 数据库整理程序.
 '''
 import os
@@ -18,6 +18,8 @@ import httpx
 from utils.parse_idcard import parseID
 from utils_daniCheck.sql_control import Sql, Info
 from pypinyin import pinyin
+import asyncio
+import aiofiles
 
 # 数据库绝对路径
 DB_PATH = Path(os.path.dirname(__file__)).joinpath('db/data.db')
@@ -101,7 +103,78 @@ def mianPyname():
         sqlbot.addPyname(i)
 
 
+async def download(url: str):
+    '''异步下载图片并保存到文件夹下'''
+    file_name = url.split('/')[-1]
+    header = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.9 Safari/537.36",
+    }
+    try:
+        async with httpx.AsyncClient(headers=header) as c:
+            resp = await c.get(url)
+            # assert resp.status_code == 200
+            async with aiofiles.open(f'E:/daniStudentPic/{file_name}', "wb") as f:
+                await f.write(resp.read())
+                print(f"{file_name}下载成功")
+    except Exception as e:
+        print(f'{url}下载错误！', e)
+
+
+async def main(i):  # 封装多任务的入口函数
+    # 用列表表达式创建任务
+    tasks = [
+        asyncio.ensure_future(download(url))
+        for url in i
+    ]
+    await asyncio.gather(*tasks)
+
+
+def download_pic():
+    '''图片私有化,防止未来的某天地球爆炸了图片不见了或者改变了.'''
+    header = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.9 Safari/537.36",
+    }
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    sql = '''
+    SELECT student_photo FROM info;
+    '''
+    cursor.execute(sql)
+    urlList = []
+    # 弃用异步下载方式
+    # for data in cursor.fetchall():
+    #     url = data[0]
+    #     if url != None:
+    #         url_row = f"https://ares-k12.weds.com.cn/{url}"
+    #         urlList.append(url_row)
+    # print(f"一共有{len(urlList)}张图片")
+    # # print(urlList)
+    # loop = asyncio.get_event_loop()
+    # loop.run_until_complete(main(urlList))
+    # E:/daniStudentPic/ 下载目录
+
+    for data in cursor.fetchall():
+        url = data[0]
+        if url != "None":
+            url_row = f"https://ares-k12.weds.com.cn/{url}"
+            urlList.append(url_row)
+    print(urlList)
+    print(f"一共有{len(urlList)}张图片")
+
+    # with httpx.Client(headers=header) as client:
+    #     for url in urlList:
+    #         try:
+    #             resp = client.get(url)
+    #             file_name = url.split('/')[-1]
+    #             with open(f'E:/daniStudentPic/{file_name}', "wb") as p:
+    #                 p.write(resp.read())
+    #             print(f"{file_name}下载成功")
+    #         except Exception as e:
+    #             print(f"{url} 下载失败：{e}")
+
+
 if __name__ == '__main__':
     # main()
     # print(get_pyname('黄颖怡'))
-    mianPyname()
+    # mianPyname()
+    download_pic()
