@@ -120,11 +120,11 @@
 						var gps = row.gps_addr.split(',');
 						var y = wgs84togcj02(gps[0], gps[1]);
 						console.log(y);
-						$(tr).append('<td><a href="http://api.map.baidu.com/marker?location=' +
+						$(tr).append(
+							'<td style="white-space:pre;"><a href="http://api.map.baidu.com/marker?location=' +
 							y[1].slice(0, 16) + "," + y[0].slice(0, 16) +
 							'&title=详细位置&content=测试点&output=html&src=webapp.baidu.openAPIdemo" target="_blank">' +
-							row
-							.gps_addr + '</a></td>');
+							gps[0] + "\n" + gps[1] + '</a></td>');
 						$(tr).append('<td><img src="data:image/png;base64' + row.base64_pic +
 							'" class="img img-responsive"/></td>');
 						$(tb).append(tr);
@@ -137,8 +137,6 @@
 				};
 			}
 		});
-		
-		
 	</script>
 	<style>
 	</style>
