@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-26 16:12:04
-LastEditTime: 2021-08-27 04:21:14
+LastEditTime: 2021-08-27 15:09:21
 Description: 利用sqlite写入日志文件.
 '''
 from pathlib import Path
@@ -12,6 +12,8 @@ import sqlite3
 from pydantic import BaseModel
 from typing import Any, List, Optional, Union
 import time
+import pytz
+import datetime
 
 
 class SeeInfo(BaseModel):
@@ -120,14 +122,11 @@ def timestamp2time(epoch: int) -> str:
     '''将时间戳转为人类可读时间'''
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(epoch))
 
+def getCNtimestamp()->int:
+    '''获取中国的时间戳'''
+    tz = pytz.timezone('Asia/Shanghai')
+    return int(datetime.datetime.now(tz).timestamp())
 
 if __name__ == '__main__':
-    # print(PROJECT_PATH)
-    # sqlbot = Sql_log()
-    # i = SeeInfo(
-    #     base64_pic="e9d9egch2odh82e8dhie2hc")
-    # sqlbot.insert(i)
-    # sqlbot.count()
-    # sqlbot.search(0, 5)
-    # print(timestamp2time(1629973324))
+    
     pass

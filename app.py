@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:02:54
-LastEditTime: 2021-08-27 05:37:44
+LastEditTime: 2021-08-27 15:10:18
 Description: Flask主文件
 '''
 from typing import Any, Union
@@ -19,7 +19,7 @@ import time
 from utils.sysinfo import sysinfo
 from utils.uploadGithub import upload_catch_pic, save_base64_pic
 from utils.parse_idcard import parseID, ParseIdResult
-from utils.write_log import SeeInfo, Sql_log
+from utils.write_log import SeeInfo, Sql_log, getCNtimestamp
 import threading
 
 
@@ -110,7 +110,7 @@ def upload_info():
         upload_data['gps'] = {'x': None, 'y': None}
 
     i = SeeInfo(
-        timestamp=int(time.time()),
+        timestamp=getCNtimestamp(),
         ip=upload_data.get('ip').get('ip'),
         ip_addr=upload_data.get('ip').get('where'),
         gps_addr="%s,%s" % (upload_data.get('gps').get(
