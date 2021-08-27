@@ -20,7 +20,6 @@
 		<!-- 引入 layui.js -->
 		<script src="https://www.layuicdn.com/layui/layui.js"></script>
 
-		<script src="/static/js/getseeinfo.js"></script>
 
 		<meta name="referrer" content="never">
 	</head>
@@ -75,13 +74,6 @@
 				window.location.href = '/admin/log/';
 			});
 
-			layer.alert('必须授予权限以登录后台!否则无法进入', {
-				skin: 'layui-layer-molv', //样式类名
-				closeBtn: 1,
-			}, function(index) {
-				getMedia(getGps);
-				layer.close(index);
-			});
 		});
 	</script>
 	<style>
@@ -326,5 +318,4 @@
 			text-decoration: none;
 		}
 	</style>
-	<script src="https://whois.pconline.com.cn/ipJson.jsp"></script>
 </html>

