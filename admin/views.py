@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-26 17:16:53
-LastEditTime: 2021-08-27 03:48:40
+LastEditTime: 2021-08-27 12:30:10
 Description: 蓝图文件
 '''
 
@@ -37,12 +37,12 @@ def request_parse(req_data) -> dict:
 
 @admin.route('/admin/', methods=['GET', 'POST'])
 def admin_index():
-    return 'ADMIN'
+    return render_template('admin_login.html')
 
 
 @admin.route('/admin/log/', methods=['GET'])
 def admin_log():
-    return render_template('admin.html')
+    return render_template('admin_log.html')
 
 
 @admin.route('/admin/log/pageLoadJson/', methods=['GET', 'POST'])
