@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-26 16:12:04
-LastEditTime: 2021-08-27 15:27:08
+LastEditTime: 2021-08-27 15:35:03
 Description: 利用sqlite写入日志文件.
 '''
 from pathlib import Path
@@ -119,8 +119,9 @@ CREATE TABLE IF NOT EXISTS log (
 
 
 def timestamp2time(epoch: int) -> str:
-    '''将时间戳转为人类可读时间'''
-    return datetime.fromtimestamp(epoch).strftime("%Y-%m-%d %H:%M:%S")
+    '''将时间戳转为中国人类可读时间'''
+    tz = pytz.timezone('Asia/Shanghai')
+    return tz.localize(datetime.fromtimestamp(epoch)).strftime("%Y-%m-%d %H:%M:%S")
 
 
 def getCNtimestamp() -> int:
