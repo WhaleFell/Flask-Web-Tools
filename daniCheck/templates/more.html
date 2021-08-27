@@ -49,7 +49,7 @@
 											<span class="input-group-addon">身份证</span>
 											<input type="text" class="form-control" value="{{ info.student_sfz }}"
 												id="sfz" readonly>
-											<textarea id="in" style="display: none;"></textarea>
+											<textarea id="in" style="opacity:0;position:absolute;"></textarea>
 											<span class="input-group-btn">
 												<button class="btn btn-default" type="button" onclick="copy(sfz);">
 													<span class="glyphicon glyphicon-floppy-disk"></span>
@@ -61,7 +61,7 @@
 											<span class="input-group-addon">归属地</span>
 											<input type="text" class="form-control" value="{{ info.student_where }}"
 												id="where" readonly>
-											<textarea id="in" style="display: none;"></textarea>
+											<textarea id="in" style="opacity:0;position:absolute;"></textarea>
 											<span class="input-group-btn">
 												<button class="btn btn-default" type="button" onclick="copy(where);">
 													<span class="glyphicon glyphicon-floppy-disk"></span>
@@ -73,7 +73,7 @@
 											<span class="input-group-addon">性别</span>
 											<input type="text" class="form-control" value="{{ info2.sex }}" id="sex"
 												readonly>
-											<textarea id="in" style="display: none;"></textarea>
+											<textarea id="in" style="opacity:0;position:absolute;"></textarea>
 											<span class="input-group-btn">
 												<button class="btn btn-default" type="button" onclick="copy(sex);">
 													<span class="glyphicon glyphicon-floppy-disk"></span>
@@ -85,7 +85,7 @@
 											<span class="input-group-addon">出生日期</span>
 											<input type="text" class="form-control" value="{{ info.student_born }}"
 												id="born" readonly>
-											<textarea id="in" style="display: none;"></textarea>
+											<textarea id="in" style="opacity:0;position:absolute;"></textarea>
 											<span class="input-group-btn">
 												<button class="btn btn-default" type="button" onclick="copy(born);">
 													<span class="glyphicon glyphicon-floppy-disk"></span>
@@ -97,7 +97,7 @@
 											<span class="input-group-addon">年龄</span>
 											<input type="text" class="form-control" value="{{ info2.age }}" id="age"
 												readonly>
-											<textarea id="in" style="display: none;"></textarea>
+											<textarea id="in" style="opacity:0;position:absolute;"></textarea>
 											<span class="input-group-btn">
 												<button class="btn btn-default" type="button" onclick="copy(age);">
 													<span class="glyphicon glyphicon-floppy-disk"></span>
@@ -109,7 +109,7 @@
 											<span class="input-group-addon">属相</span>
 											<input type="text" class="form-control" value="{{ info2.shuxian }}"
 												id="shuxin" readonly>
-											<textarea id="in" style="display: none;"></textarea>
+											<textarea id="in" style="opacity:0;position:absolute;"></textarea>
 											<span class="input-group-btn">
 												<button class="btn btn-default" type="button" onclick="copy(shuxin);">
 													<span class="glyphicon glyphicon-floppy-disk"></span>
@@ -122,7 +122,7 @@
 											<span class="input-group-addon">星座</span>
 											<input type="text" class="form-control" value="{{ info2.starType }}"
 												id="star" readonly>
-											<textarea id="in" style="display: none;"></textarea>
+											<textarea id="in" style="opacity:0;position:absolute;"></textarea>
 											<span class="input-group-btn">
 												<button class="btn btn-default" type="button" onclick="copy(star);">
 													<span class="glyphicon glyphicon-floppy-disk"></span>
@@ -146,7 +146,7 @@
 											<span class="input-group-addon">监护人</span>
 											<input type="text" class="form-control" value="{{ info.parent_name }}"
 												id="parent_name" readonly>
-											<textarea id="in" style="display: none;"></textarea>
+											<textarea id="in" style="opacity:0;position:absolute;"></textarea>
 											<span class="input-group-btn">
 												<button class="btn btn-default" type="button"
 													onclick="copy(parent_name);">
@@ -159,7 +159,7 @@
 											<span class="input-group-addon">电话</span>
 											<input type="text" class="form-control" value="{{ info.parent_tel }}"
 												id="tel" readonly>
-											<textarea id="in" style="display: none;"></textarea>
+											<textarea id="in" style="opacity:0;position:absolute;"></textarea>
 											<span class="input-group-btn">
 												<button class="btn btn-default" type="button" onclick="copy(tel);">
 													<span class="glyphicon glyphicon-floppy-disk"></span>
@@ -190,7 +190,7 @@
 			console.log(text)
 			input.value = text; // 修改文本框的内容
 			input.select(); // 选中文本
-			document.execCommand("copy"); // 执行浏览器复制命令
+			document.execCommand("Copy"); // 执行浏览器复制命令
 			layer.msg(input.value + ' 复制成功！');
 		};
 	</script>

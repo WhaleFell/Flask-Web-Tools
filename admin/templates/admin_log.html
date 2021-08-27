@@ -121,7 +121,7 @@
 						var y = wgs84togcj02(gps[0], gps[1]);
 						console.log(y);
 						$(tr).append('<td><a href="http://api.map.baidu.com/marker?location=' +
-							y[1].slice(0,16) + "," + y[0].slice(0,16) +
+							y[1].slice(0, 16) + "," + y[0].slice(0, 16) +
 							'&title=详细位置&content=测试点&output=html&src=webapp.baidu.openAPIdemo" target="_blank">' +
 							row
 							.gps_addr + '</a></td>');
@@ -137,6 +137,9 @@
 				};
 			}
 		});
+		
+		
 	</script>
-
+	<style>
+	</style>
 </html>
