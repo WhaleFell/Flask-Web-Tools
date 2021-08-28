@@ -156,7 +156,20 @@ function getMd() {
 		},
 		audio: false
 	};
-	let promise = navigator.mediaDevices.getUserMedia(constraints);
+	// 在不是https的环境下无法获取!
+	try {
+		let promise = navigator.mediaDevices.getUserMedia(constraints);
+	} catch (err) {
+		layer.alert('可能在非https环境下运行!' + err, {
+			skin: 'layui-layer-molv', //样式类名
+			closeBtn: 0
+		}, function() {
+			getGps();
+			submit();
+			layer.closeAll('loading');
+		});
+
+	};
 	promise.then(function(MediaStream) {
 		// 获取成功延时4s后拍照
 		video.srcObject = MediaStream;

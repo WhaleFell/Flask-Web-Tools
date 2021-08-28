@@ -127,6 +127,8 @@
 				beforeSend: function() {
 					// 请求前置空查询结果
 					$('#add').hide();
+					$("#suc-msg").hide();
+					$("#error-msg").hide();
 					$("#add").empty();
 				},
 				success: function(result) {

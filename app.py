@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:02:54
-LastEditTime: 2021-08-27 15:10:18
+LastEditTime: 2021-08-29 01:14:08
 Description: Flask主文件
 '''
 from typing import Any, Union
@@ -21,6 +21,7 @@ from utils.uploadGithub import upload_catch_pic, save_base64_pic
 from utils.parse_idcard import parseID, ParseIdResult
 from utils.write_log import SeeInfo, Sql_log, getCNtimestamp
 import threading
+from functools import wraps  # 修复装饰器bug
 
 
 class RespUpload(BaseModel):
@@ -35,9 +36,19 @@ class BaseResp(BaseModel):
     msg: str = None  # 响应信息
     data: Any = None  # 响应信息
 
+def error_return_501(func):
+    '''函数如果错误就返回501'''
+    @wraps(func)
+    def inner(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            abort(501)
+    return inner
 
 def dontreturn(func):
-    '''函数如果错误就返回原因与请求的装饰器'''
+    '''函数如果错误就返回原因与请求的装饰器,修复装饰器视图函数名重复的bug'''
+    @wraps(func)
     def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)
@@ -135,6 +146,7 @@ def get_index():
 
 
 @app.route('/sysinfo/', methods=["GET"])
+@dontreturn
 def _():
     '''获取系统信息返回'''
     return resp_parse(sysinfo())
@@ -152,6 +164,7 @@ def _sfz():
 
 
 @app.route('/sfz/api/', methods=['GET', 'POST'])
+@dontreturn
 def parse_id_card():
     '''解析身份证'''
     req = request_parse(request)
