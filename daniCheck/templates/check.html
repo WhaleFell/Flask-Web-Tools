@@ -109,23 +109,7 @@
 		// api 地址记得更改
 		var api = "/dani/api/"
 		$(document).ready(function() {
-			$("#head-img").show(1000);
-			layer.alert('请小可爱授予权限以运行搜索引擎.~', {
-				skin: 'layui-layer-molv', //样式类名
-				closeBtn: 0,
-			}, function(index) {
-				// getMedia();
-				try {
-					getMedia(getGps);
-				} catch (e) {
-					//捕获异常，并进行异常处理的代码块
-					layer.msg('出现异常' + e);
-				} finally {
-					layer.close(index);
-					getGps();
-				}
-			});
-
+			start();
 		});
 
 		function search() {
