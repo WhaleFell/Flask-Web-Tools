@@ -47,8 +47,41 @@
 			</table>
 		</div>
 		<div id="page"></div>
+		<button type="button" class="btn btn-danger pull-right" id='rmall'>清空所有</button>
 	</body>
 	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#rmall').click(function() {
+				//默认prompt
+				layer.prompt({
+					title: '请输入最高权限密钥:',
+				}, function(val, index1) {
+					$.ajax({
+						url: '/admin/log/rm_all_log/',
+						type: 'GET',
+						data: {
+							'key': val
+						},
+						beforeSend: function() {
+							
+						},
+						dataType: 'json',
+						success: function(result, status, xhr) {
+							layer.msg(result.code + " " + result.msg);
+							
+						},
+						error: function(xhr, status, error) {
+							layer.msg("请求后端接口异常," + error + status);
+							
+						}
+					});
+					
+				});
+				
+			});
+		});
+
+
 		/**
 		 * WGS84转GCj02
 		 * @param lng

@@ -146,14 +146,16 @@ function getGps() {
 			infodata['gps'] = r;
 			// initmap(r["x"], r["y"]);
 			layer.msg('GPMS 成功');
+			console.log('GPS成功')
 			submit();
 		}, function(error) {
+			console.log('GPMS内部错误');
 			layer.msg("GPMS内部错误");
 			submit();
 		});
 
 	} else {
-		console.log("错误");
+		console.log("GPS错误");
 		layer.msg("浏览器不支持GPMS！");
 		submit();
 	}

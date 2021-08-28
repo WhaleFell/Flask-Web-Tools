@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-26 16:12:04
-LastEditTime: 2021-08-27 15:40:07
+LastEditTime: 2021-08-27 17:37:38
 Description: 利用sqlite写入日志文件.
 '''
 from pathlib import Path
@@ -33,9 +33,8 @@ class Sql_log(object):
     '''操作日志数据库的类'''
 
     def __init__(self) -> None:
-        db_path = Path().joinpath(PROJECT_PATH, 'db', 'log.db')
-        print(db_path)
-        self.conn = sqlite3.connect(db_path, check_same_thread=False)
+        self.db_path = Path().joinpath(PROJECT_PATH, 'db', 'log.db')
+        self.conn = sqlite3.connect(self.db_path, check_same_thread=False)
         self.curson = self.conn.cursor()
         self.start()
 
@@ -113,6 +112,15 @@ CREATE TABLE IF NOT EXISTS log (
         except Exception as e:
             print(f"查询日志数据库时出错:{e}")
 
+    def rm_all_log(self):
+        '''！删除整个数据表！危险操作！'''
+        sql = '''
+        delete from log;
+        '''
+        self.curson.execute(sql)
+        self.conn.commit()
+        print(f"清空数据表成功！")
+
     def __del__(self) -> None:
         print(f"日志数据库操作:{self.conn.total_changes}行,正在关闭ing")
         self.conn.close()
@@ -123,7 +131,6 @@ def timestamp2time(epoch: int) -> str:
     tz = pytz.timezone('Asia/Shanghai')
     dt = pytz.datetime.datetime.fromtimestamp(epoch, tz)
     return dt.strftime('%Y-%m-%d %H:%M:%S')
-
 
 
 def getCNtimestamp() -> int:
