@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:12:38
-LastEditTime: 2021-08-29 10:48:16
+LastEditTime: 2021-08-29 11:03:56
 Description: 大沥查人视图函数
 '''
 import os
@@ -18,6 +18,7 @@ from flask import jsonify, request, current_app, session, render_template, make_
 from flask import *
 from . import dani
 from utils.parse_idcard import parseID
+from utils.func import *
 
 
 sql = Sql()

@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-26 17:16:53
-LastEditTime: 2021-08-29 10:48:37
+LastEditTime: 2021-08-29 11:04:13
 Description: 蓝图文件
 '''
 from pathlib import Path
@@ -15,7 +15,7 @@ from flask import request, current_app, session, render_template, make_response,
 from utils.write_log import Sql_log
 from typing import Any
 from pydantic import BaseModel
-from app import dontreturn,error_return_501,request_parse,resp_parse,BaseResp
+from utils.func import *
 
 
 @admin.route('/admin/', methods=['GET', 'POST'])
