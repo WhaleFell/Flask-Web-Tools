@@ -3,11 +3,12 @@
 '''
 Author: whalefall
 Date: 2021-08-26 17:16:53
-LastEditTime: 2021-08-29 01:32:38
+LastEditTime: 2021-08-29 10:48:37
 Description: 蓝图文件
 '''
+from pathlib import Path
 import os,sys
-sys.path.append(os.getcwd())
+sys.path.append(Path(os.path.dirname(__file__)).resolve().parent)
 from . import admin
 from flask import *
 from flask import request, current_app, session, render_template, make_response, Response, abort

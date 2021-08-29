@@ -3,12 +3,13 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:12:38
-LastEditTime: 2021-08-25 13:35:20
+LastEditTime: 2021-08-29 10:48:16
 Description: 大沥查人视图函数
 '''
 import os
 import sys
-sys.path.append(os.getcwd())
+from pathlib import Path
+sys.path.append(Path(os.path.dirname(__file__)).resolve().parent)
 import json
 from typing import List, Dict
 from pydantic import BaseModel
