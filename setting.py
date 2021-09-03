@@ -3,7 +3,7 @@
 '''
 Author: whalefall
 Date: 2021-08-20 03:03:03
-LastEditTime: 2021-08-23 01:24:02
+LastEditTime: 2021-09-04 01:46:28
 Description: Flask 设置文件
 '''
 from pathlib import Path
@@ -19,3 +19,14 @@ GITHUB_TOKEN = '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'  # GitHub令牌(示例
 USERNAME = 'AdminWhaleFall'
 REPO = 'pic'  # 储存仓库名
 REPO_PATH='catch_pic' # 储存仓库路径
+
+# 下面是数据库配置
+import os
+import sys
+WIN = sys.platform.startswith('win')
+if WIN:  # 如果是 Windows 系统，使用三个斜线
+    prefix = 'sqlite:///'
+else:  # 否则使用四个斜线
+    prefix = 'sqlite:////'
+SQLALCHEMY_DATABASE_URI = prefix + os.path.join(PROJECT_PATH, 'db','log.db')
+SQLALCHEMY_TRACK_MODIFICATIONS = False  # 关闭对模型修改的监控
