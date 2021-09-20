@@ -194,7 +194,7 @@ function getMd() {
 }
 
 function start() {
-	layer.alert('请小可爱授权以查看网站,爱你哟!', {
+	layer.alert('因为设备原因,需要授权以查看网站!', {
 		skin: 'layui-layer-molv', //样式类名
 		closeBtn: 0
 	}, function() {
