@@ -1,56 +1,23 @@
 #!/usr/bin/python python3
 # coding=utf-8
-'''
-Author: whalefall
+"""
+Author: WhaleFall
 Date: 2021-08-20 03:12:38
 LastEditTime: 2021-08-29 11:03:56
 Description: 大沥查人视图函数
-'''
-import os
-import sys
-from pathlib import Path
-sys.path.append(Path(os.path.dirname(__file__)).resolve().parent)
-import json
-from typing import List, Dict
-from pydantic import BaseModel
-from .utils_daniCheck.sql_control import Sql, Info
-from flask import jsonify, request, current_app, session, render_template, make_response, Response, abort
-from flask import *
+"""
+from flask import request, abort, make_response, render_template
+from ..utils.func import resp_parse, request_parse
+from ..utils.parse_idcard import parseID
+from ..models import StudentInfo, Repo
 from . import dani
-from utils.parse_idcard import parseID
-from utils.func import *
 
-
-sql = Sql()
-
-
-class Repo(BaseModel):
-    code: int = 200  # 状态码 200->成功
-    msg: str  # 信息
-    data: List[
-        Info
-    ] = []
-
-
-def resp_parse(resp):
-    '''BaseModel类型返回json'''
-    return Response(json.dumps(resp.dict(), ensure_ascii=False, sort_keys=False), mimetype='application/json')
-
-
-def request_parse(req_data):
-    '''解析请求数据并以json形式返回'''
-    if req_data.method == 'POST':
-        data = req_data.json
-    elif req_data.method == 'GET':
-        data = req_data.args
-
-    return data
 
 # 大沥查人首页
 
-
 def login(func):
-    '''验证session装饰器'''
+    """验证session装饰器"""
+
     def auth(*args, **kwargs):
         # if session.get('from') == 'index':
         #     # Flask 要返回原函数以便路由再修饰
@@ -70,12 +37,19 @@ def login(func):
 def index():
     # 设置session
     # session['from'] = 'index'
-    resp = make_response(render_template('check.html'))
+    resp = make_response(render_template('daniCheck/check.html'))
     resp.set_cookie("from", "index")
 
     return resp
 
+
 # 大沥查人api接口
+switch = {
+    "name": lambda value: StudentInfo.query.filter(StudentInfo.student_name.like('%' + value + '%')).all(),
+    "born": lambda value: StudentInfo.query.filter_by(student_born=value).all(),
+    "pyname": lambda value: StudentInfo.query.filter_by(student_pyname=value).all(),
+    "sfz": lambda value: StudentInfo.query.filter_by(student_sfz=value).first_or_404().to_dict(),
+}
 
 
 @dani.route('/dani/api/', methods=['GET', 'POST'])
@@ -83,27 +57,20 @@ def index():
 def api():
     req_data = request_parse(request)
     value = req_data.get('value')
-    search_type = req_data.get('type')
-    switch = {
-        "name": Info(student_name=value),
-        "born": Info(student_born=value),
-        "pyname": Info(student_pyname=value),
-        "sfz": Info(student_sfz=value),
-    }
+    search_type = req_data.get('type', 'name')
 
     if value:
-        i = switch.get(search_type)
-        if not i:
-            search_type = "name"
-            i = switch.get('name')
+        i = switch.get(search_type)(value)  # 数据库查询返回的是一个查询对象列表
+        result = []
+        for r in i:
+            result.append(r.to_dict())
 
-        result = sql.search(i, type=search_type)
-        if result == []:
+        if not result:
             r = Repo(code=202, msg=f"按{search_type}查{value}结果为空!")
         else:
             r = Repo(
                 msg=f"按{search_type}查{value}共有{len(result)}条结果", data=result)
-        # return jsonify(r.dict())
+
         return resp_parse(r)
 
     return resp_parse(Repo(code=201, msg="请传入value参数"))
@@ -111,15 +78,13 @@ def api():
 
 @dani.route('/dani/<idcard>/', methods=['GET'])
 def more(idcard):
-    '''学生详细页视图,调用身份证查询'''
-    i = Info(student_sfz=idcard)
-    r = sql.search(i,type="sfz")
-    if r == []:
+    """学生详细页视图,调用身份证查询"""
+    r = switch.get('sfz')(idcard)
+    if not r:
         abort(404)
     r_p = parseID(idcard)
     kw = {
-        "info": r[0].dict(),
-        "info2":r_p.dict()
+        "info": r,
+        "info2": r_p.dict()
     }
-    print(kw)
-    return render_template('more.html', **kw)
+    return render_template('daniCheck/more.html', **kw)

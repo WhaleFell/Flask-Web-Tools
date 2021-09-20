@@ -42,7 +42,7 @@ def uptime():
         - datetime.datetime.utcfromtimestamp(boot).replace(microsecond=0)
     )
     alltime = (boottime, nowtime, up_time)
-    return "已经运行了%s" % (up_time)
+    return "已经运行了%s" % up_time
 
 
 def sysinfo() -> SystemInfo:
@@ -52,7 +52,7 @@ def sysinfo() -> SystemInfo:
         s = SystemInfo(cpu_status=mem_info, uptime=up_time,
                        percent_nc=percent_nc)
     except Exception as e:
-        s = SystemInfo(code=501, msg="获取失败!%s" % (e))
+        s = SystemInfo(code=501, msg="获取失败!%s" % e)
     finally:
         return s
 

@@ -10,7 +10,8 @@ from pydantic import BaseModel
 from typing import Any
 from functools import wraps
 import json
-from flask import Response,request,abort
+from flask import Response, request, abort
+
 
 def resp_parse(resp):
     '''BaseModel类型返回json'''
@@ -40,24 +41,28 @@ class BaseResp(BaseModel):
     msg: str = None  # 响应信息
     data: Any = None  # 响应信息
 
+
 def error_return_501(func):
     '''函数如果错误就返回501'''
+
     @wraps(func)
     def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except Exception as e:
             abort(501)
+
     return inner
 
+
 def dontreturn(func):
-    '''函数如果错误就返回原因与请求的装饰器,修复装饰器视图函数名重复的bug'''
+    """函数如果错误就返回原因与请求的装饰器,修复装饰器视图函数名重复的bug"""
+
     @wraps(func)
     def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except Exception as e:
             return resp_parse(BaseResp(code=201, msg=f'通用接口错误,{e}'))
+
     return inner
-
-

@@ -1,12 +1,11 @@
 #!/usr/bin/python python3
 # coding=utf-8
-'''
-Author: whalefall
+"""
+Author: WhaleFall
 Date: 2021-08-23 01:05:26
 LastEditTime: 2021-08-26 18:22:56
 Description: 上传抓拍到的文件到GitHub
-'''
-import setting
+"""
 import re
 import requests
 import base64
