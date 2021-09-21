@@ -7,6 +7,8 @@ LastEditTime: 2021-09-20 12:14:33
 Description: 数据库模型,及返回api的basemodels模型
 """
 from . import db
+from . import login_manager
+from flask_login import UserMixin
 from pydantic import BaseModel
 from typing import Optional, Union, List
 from datetime import datetime
@@ -20,11 +22,26 @@ def getCNtimestamp() -> int:
 
 
 def timestamp2time(epoch: int) -> str:
-    '''将时间戳转为中国人类可读时间'''
+    """将时间戳转为中国人类可读时间"""
     epoch = int(epoch)
     tz = pytz.timezone('Asia/Shanghai')
     dt = pytz.datetime.datetime.fromtimestamp(epoch, tz)
     return dt.strftime('%Y-%m-%d %H:%M:%S')
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    """用户加载,获取已登录用户的信息使用,传入用户识别符"""
+    return User.query.get(int(user_id))
+
+
+class User(UserMixin, db.Model):
+    """用户储存模型"""
+    __tablename__ = 'users'
+    id = db.Column(db.INTEGER, primary_key=True)
+    email = db.Column(db.String(64), unique=True, index=True)
+    username = db.Column(db.String(64), unique=True, index=True)
+    password = db.Column(db.String(64))
 
 
 class Log(db.Model):

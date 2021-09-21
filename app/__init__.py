@@ -8,10 +8,14 @@ Description: APP包工厂函数
 """
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 from config import config
 
 # 实例化数据库全局对象
 db = SQLAlchemy()
+# 实例化登录对象
+login_manager = LoginManager()
+login_manager.login_view = 'admin.admin_index'
 
 
 def create_app(config_name):
@@ -20,6 +24,7 @@ def create_app(config_name):
     config[config_name].init_app(app)  # 配置类中的初始化
 
     db.init_app(app)
+    login_manager.init_app(app)
 
     # 注册蓝本
     from .main import main as main_blueprint
