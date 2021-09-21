@@ -82,11 +82,11 @@ CREATE TABLE IF NOT EXISTS log (
             print(f"查询日志数据库个数时出错:{e}")
 
     def search(self, start: int, count: int) -> List[SeeInfo]:
-        '''sqlite3 分页查询
+        """sqlite3 分页查询
         select * from log order by timestamp limit 10 offset 0;
         offset代表从第几条记录“之后“开始查询，limit表明查询多少条结果 DESC降序排列;
         查询时间时自动把时间戳转为人类可读时间.
-        '''
+        """
         sql = f'''
         select * from log order by timestamp DESC limit {count} offset {start};  
         '''

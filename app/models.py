@@ -21,6 +21,7 @@ def getCNtimestamp() -> int:
 
 def timestamp2time(epoch: int) -> str:
     '''将时间戳转为中国人类可读时间'''
+    epoch = int(epoch)
     tz = pytz.timezone('Asia/Shanghai')
     dt = pytz.datetime.datetime.fromtimestamp(epoch, tz)
     return dt.strftime('%Y-%m-%d %H:%M:%S')
@@ -35,6 +36,13 @@ class Log(db.Model):
     ip_addr = db.Column(db.String(64), nullable=True)
     gps_addr = db.Column(db.String(64), nullable=True)
     base64_pic = db.Column(db.TEXT, nullable=True)
+
+    # 把SQLAlchemy查询对象(单个)转换成字典,并添加一个可读时间字段
+    # 当多个查询对象以列表组合的话要先遍历再使用哦
+    def to_dict(self):
+        r_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        r_dict['read_time'] = timestamp2time(r_dict['timestamp'])
+        return r_dict
 
 
 class StudentInfo(db.Model):

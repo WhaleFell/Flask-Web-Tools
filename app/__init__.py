@@ -28,4 +28,7 @@ def create_app(config_name):
     from .daniCheck import dani
     app.register_blueprint(dani)
 
+    from .admin import admin
+    app.register_blueprint(admin)
+
     return app
