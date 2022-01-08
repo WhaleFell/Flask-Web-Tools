@@ -11,7 +11,8 @@ from flask_migrate import Migrate
 import click
 
 app = create_app('default')
-migrate = Migrate(app,db)
+migrate = Migrate(app, db)
+
 
 # 将一些杂七杂八的变量对象添加到flask shell中
 # @app.shell_context_processors

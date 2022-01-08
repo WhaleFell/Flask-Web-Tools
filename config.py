@@ -1,11 +1,11 @@
 #!/usr/bin/python python3
 # coding=utf-8
-'''
+"""
 Author: whalefall
 Date: 2021-09-20 11:08:25
 LastEditTime: 2021-09-20 13:47:21
 Description: Flask应用配置文件
-'''
+"""
 import os
 import platform
 
@@ -16,7 +16,7 @@ class Config(object):
     '''基类Config,每个子类可以分别定义配置'''
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'lovehyypzezxiqiao1111'  # 密钥
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # 数据库
-
+    FLASK_DEBUG = True
     SESSION_TYPE = 'filesystem'  # session 模式
     JSON_AS_ASCII = False  # 禁止json中文自动转码
     PERMANENT_SESSION_LIFETIME = 10  # session超时时间
@@ -34,8 +34,8 @@ class Config(object):
 
 
 class DevelopmentConfig(Config):
-    '''开发配置'''
-    DEBUG = True
+    """开发配置"""
+    FLASK_DEBUG = True
     HOST = "0.0.0.0"
     # 判断操作系统拼接数据库地址
     if platform.system().lower() == 'windows':

@@ -7,7 +7,7 @@ LastEditTime: 2021-08-26 18:22:56
 Description: 上传抓拍到的文件到GitHub
 """
 import re
-import requests
+# import requests
 import base64
 import json
 # from flask import current_app  # 应用上下文对象
@@ -29,43 +29,43 @@ def file2base64(path):
     return data_b64
 
 
-def upload_catch_pic(path_pic, file_name=int(time.time())):
-    '''传入图片base64后的数据,保存到GitHub,新建线程挂后台执行'''
-    # 获取配置信息并判断
-    token = setting.GITHUB_TOKEN
-    able = setting.UPLOAD_PIC
-    repo = setting.REPO
-    username = setting.USERNAME
-    path = setting.REPO_PATH
-
-    if not able:
-        print("禁止上传文件!")
-        return
-
-    # 用户名、库名、路径
-    url = f"https://api.github.com/repos/{username}/{repo}/contents/{path}/{file_name}.jpg"
-    headers = {"Authorization": "token " + token}
-    content = file2base64(path_pic)
-    data = {
-        "message": "message",
-        "committer": {
-            "name": "AdminWhaleFall",
-            "email": "2734184475@qq.com"
-        },
-        "content": content
-    }
-    try:
-        data = json.dumps(data)
-        req = requests.put(url=url, data=data, headers=headers)
-        req.encoding = "utf-8"
-        re_data = json.loads(req.text)
-        print(re_data)
-        # print(re_data['content']['sha'])
-        # print("https://cdn.jsdelivr.net/gh/[user]/[repo]/[path]"+file_name)
-        return re_data
-    except Exception as e:
-        print("图片上传时发生错误,", e)
-        return False
+# def upload_catch_pic(path_pic, file_name=int(time.time())):
+#     '''传入图片base64后的数据,保存到GitHub,新建线程挂后台执行'''
+#     # 获取配置信息并判断
+#     token = setting.GITHUB_TOKEN
+#     able = setting.UPLOAD_PIC
+#     repo = setting.REPO
+#     username = setting.USERNAME
+#     path = setting.REPO_PATH
+#
+#     if not able:
+#         print("禁止上传文件!")
+#         return
+#
+#     # 用户名、库名、路径
+#     url = f"https://api.github.com/repos/{username}/{repo}/contents/{path}/{file_name}.jpg"
+#     headers = {"Authorization": "token " + token}
+#     content = file2base64(path_pic)
+#     data = {
+#         "message": "message",
+#         "committer": {
+#             "name": "AdminWhaleFall",
+#             "email": "2734184475@qq.com"
+#         },
+#         "content": content
+#     }
+#     try:
+#         data = json.dumps(data)
+#         req = requests.put(url=url, data=data, headers=headers)
+#         req.encoding = "utf-8"
+#         re_data = json.loads(req.text)
+#         print(re_data)
+#         # print(re_data['content']['sha'])
+#         # print("https://cdn.jsdelivr.net/gh/[user]/[repo]/[path]"+file_name)
+#         return re_data
+#     except Exception as e:
+#         print("图片上传时发生错误,", e)
+#         return False
 
 
 def save_base64_pic(base64_pic,file_name=int(time.time())):
