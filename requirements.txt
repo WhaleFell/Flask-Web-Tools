@@ -12,3 +12,4 @@ flask_login
 python-dotenv
 flask_wtf
 pytz~=2021.3
+email-validator
