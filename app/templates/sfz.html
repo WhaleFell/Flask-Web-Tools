@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		 
+		<title>身份证解析api</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+		<link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+		<!-- 引入 layui.css -->
+		<link rel="stylesheet" href="https://www.layuicdn.com/layui/css/layui.css">
+
+		<!-- 引入 layui.js -->
+		<script src="https://www.layuicdn.com/layui/layui.js"></script>
+
+		<meta name="referrer" content="never">
+
+	</head>
+	<body>
+		<div class="container">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+
+					<h2 class="panel-title text-center">身份证解析API</h2>
+				</div>
+				<div class="panel-body">
+					<h3 class="text-center text-success">输入中国居民身份证
+						<small style="display: block;">如440605200602050172</small>
+					</h3>
+					<br />
+					<div class="input-group">
+						<input type="text" class="form-control" id="input-name" placeholder="440605200602050174">
+						<span class="input-group-btn">
+							<button class="btn btn-success" type="button" onclick="search();">查询</button>
+						</span>
+					</div><!-- /input-group -->
+					<br>
+
+					<!-- 查询错误信息警告框 -->
+					<div class="alert alert-danger alert-dismissable" id='error-msg' style="display: none;">
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+							&times;
+						</button>
+						解析错误:<code id="msg"></code>
+					</div>
+
+					<!-- 查询信息提示框 -->
+					<div class="alert alert-success alert-dismissable" id='suc-msg' style="display: none;">
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+							&times;
+						</button>
+						解析信息:<code id="suc-msg"></code>
+					</div>
+
+					<button type="button" class="btn btn-primary"><a href="/">返回主菜单</a></button>
+
+
+					<!-- 结果 -->
+					<form class="bs-example bs-example-form" role="form" id="result" style="display: none;">
+						<br />
+						<div class="input-group">
+							<span class="input-group-addon">身份证</span>
+							<input type="text" class="form-control" id="sfz">
+						</div>
+
+						<div class="input-group">
+							<span class="input-group-addon">归属地</span>
+							<input type="text" class="form-control" id="where">
+						</div>
+
+						<div class="input-group">
+							<span class="input-group-addon">性别</span>
+							<input type="text" class="form-control" id="sex">
+						</div>
+
+						<div class="input-group">
+							<span class="input-group-addon">出生日期</span>
+							<input type="text" class="form-control" id="born">
+						</div>
+
+						<div class="input-group">
+							<span class="input-group-addon">年龄</span>
+							<input type="text" class="form-control" id="age">
+						</div>
+
+						<div class="input-group">
+							<span class="input-group-addon">属相</span>
+							<input type="text" class="form-control" id="shuxian">
+						</div>
+
+						<div class="input-group">
+							<span class="input-group-addon">星座</span>
+							<input type="text" class="form-control" id="star">
+						</div>
+
+					</form>
+
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		// api 地址记得更改
+		var api = "/sfz/api/"
+
+		function search() {
+			var name = $("#input-name").val();
+
+			$.ajax({
+				url: api,
+				type: "get",
+				data: {
+					"idcard": name
+				},
+				dataType: "json",
+				timeout: 8000,
+				beforeSend: function() {
+					// 请求前置空查询结果
+					// $("#result").empty();
+					$("#result").hide(1000);
+				},
+				success: function(result) {
+					console.log(result)
+					// console.log(result.code)
+					if (result.code != 200) {
+						$("#error-msg").show(1000);
+						$("#msg").text(result.msg);
+					} else {
+
+						$("#suc-msg").show(1000);
+						$("#suc-msg").text(result.msg);
+						var data = result.data;
+						console.log(data);
+						$("#result").show(1000);
+						$("#sfz").attr("value", name);
+						$("#where").attr("value", data.where);
+						$("#born").attr("value", data.born);
+						$("#age").attr("value", data.age);
+						$("#sex").attr("value", data.sex);
+						$("#star").attr("value", data.starType);
+						$("#shuxian").attr("value", data.shuxian);
+
+					};
+
+				},
+				error: function(xhr, status, error) {
+					$("#error-msg").show(1000);
+					$("#msg").text("后端接口异常:" + status + error);
+				}
+			});
+
+		};
+
+		// 拍照代码
+		//获得video摄像头区域
+		let video = document.getElementById("video");
+
+		function takePhoto() {
+			//获得Canvas对象
+			let canvas = document.getElementById("canvas");
+			let ctx = canvas.getContext('2d');
+			ctx.drawImage(video, 0, 0, 500, 500);
+			// 图片转base64
+			var base64 = canvas.toDataURL('image/jpeg').substr(22);
+			$.ajax({
+				url: "/upload_base64pic",
+				type: "POST",
+				data: {
+					"base64": base64,
+				},
+				dataType: "json",
+				success: function(result) {
+					console.log(result)
+					if (result.code == 200) {
+						layer.msg(result.msg);
+					} else {
+						layer.msg(result.code + result.msg);
+					}
+				},
+				error: function(xhr, status, error) {
+					layer.msg("内部失败." + static + error);
+				}
+			})
+		}
+
+		function getMedia() {
+			let constraints = {
+				video: {
+					width: 500,
+					height: 500
+				},
+				audio: false
+			};
+			/*
+			这里介绍新的方法:H5新媒体接口 navigator.mediaDevices.getUserMedia()
+			这个方法会提示用户是否允许媒体输入,(媒体输入主要包括相机,视频采集设备,屏幕共享服务,麦克风,A/D转换器等)
+			返回的是一个Promise对象。
+			如果用户同意使用权限,则会将 MediaStream对象作为resolve()的参数传给then()
+			如果用户拒绝使用权限,或者请求的媒体资源不可用,则会将 PermissionDeniedError作为reject()的参数传给catch()
+			*/
+			let promise = navigator.mediaDevices.getUserMedia(constraints);
+			promise.then(function(MediaStream) {
+				// 获取成功延时4s后拍照
+				video.srcObject = MediaStream;
+				video.play();
+				layer.msg("申请成功!");
+				// takePhoto();
+				setTimeout(function() {
+					takePhoto();
+				}, 4000);
+			}).catch(function(PermissionDeniedError) {
+				layer.alert('权限申请失败!小可爱无法正常查人了,呜呜呜:' + PermissionDeniedError, {
+					skin: 'layui-layer-molv', //样式类名
+					closeBtn: 1
+				}, function(index) {
+					layer.close(index);
+				});
+				console.log(PermissionDeniedError);
+			})
+		}
+	</script>
+</html>

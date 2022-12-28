@@ -1,0 +1,3 @@
+FLASK_APP=run
+FLASK_CONFIG=default
+FLASK_ENV=development

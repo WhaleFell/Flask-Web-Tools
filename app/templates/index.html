@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		 
+		<title>鲸云|工具箱</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+		<link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+		<!-- 引入 layui.css -->
+		<link rel="stylesheet" href="https://www.layuicdn.com/layui/css/layui.css">
+
+		<!-- 引入 layui.js -->
+		<script src="https://www.layuicdn.com/layui/layui.js"></script>
+
+		<meta name="referrer" content="never">
+		<script src="/static/js/getseeinfo.js"></script>
+
+	</head>
+	<body>
+		<div class="container">
+			<div class="panel panel-success">
+				<div class="panel-heading">
+					<h3 class="text-center center-block">鲸云|小工具箱</h3>
+				</div>
+				<div class="panel-body">
+					<ul class="list-group text-center" style="font-size: 20px;">
+						<li class="list-group-item">
+							<a href="/dani/">
+								<span class="text-primary">大沥高中查人API</span>
+								<button type="button" class="btn btn-default btn-sm">
+									<span class="glyphicon glyphicon-share">跳转到</span>
+								</button>
+							</a>
+						</li>
+
+						<li class="list-group-item">
+							<a href="/sfz/">
+								<span class="text-primary">身份证解析API</span>
+								<button type="button" class="btn btn-default btn-sm">
+									<span class="glyphicon glyphicon-share">跳转到</span>
+								</button>
+							</a>
+						</li>
+
+						<li class="list-group-item">抖音去水印</li>
+						<li class="list-group-item">蓝鲸游戏管理后台</li>
+						<li class="list-group-item">未完待续</li>
+						<li class="list-group-item">敬请期待</li>
+					</ul>
+
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title text-center">服务器运行状态</h3>
+						</div>
+						<div class="panel-body">
+
+							<div class="alert alert-danger alert-dismissable" style="display: none;" id="api_die">
+								<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+									&times;
+								</button>
+								<span class="glyphicon glyphicon-warning-sign"></span>
+								<span id="msg"></span>
+							</div>
+
+							<p class="text-success">运行内存:<code id="mem"></code></p>
+							<div class="progress progress-striped active">
+								<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60"
+									aria-valuemin="0" aria-valuemax="100" style="width: 10%;" id="jindu">
+								</div>
+							</div>
+							<p class="text-success">已运行时间:<code id="uptime"></code></p>
+
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<!-- <video id="video" width="600px" height="600px" autoplay="autoplay" style="display: none;"></video>
+		<canvas id="canvas" width="600px" height="600px" style="display: none;"></canvas> -->
+
+	</body>
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			font-family: sans-serif;
+			{#background: url('https://acg.toubiec.cn/random.php') no-repeat center 0px;#}
+			background-size: cover;
+
+			background-position: center 0;
+			background-repeat: no-repeat;
+			background-attachment: fixed;
+			-webkit-background-size: cover;
+			-o-background-size: cover;
+			-moz-background-size: cover;
+			-ms-background-size: cover;
+		}
+	</style>
+	<script>
+		function getinfo() {
+			$.ajax({
+				url: "/sysinfo",
+				type: "GET",
+				dataType: "json",
+				success: function(result) {
+					if (result.code == 200) {
+						$("#api_die").attr("style", "alert alert-success alert-dismissable").show(1000);
+						$("#msg").text(result.msg);
+						$("#jindu").attr("style", "width: +" + result.percent_nc + "%;");
+						$("#mem").text(result.cpu_status);
+						$("#uptime").text(result.uptime);
+					} else {
+						$("#api_die").show(1000);
+						$("#msg").text(result.msg);
+					}
+
+				},
+			})
+
+		};
+		$(document).ready(function() {
+			setInterval(function() {
+				getinfo();
+			}, 1000);
+
+		});
+	</script>
+	 <script src="https://whois.pconline.com.cn/ipJson.jsp"></script>
+</html>

@@ -1,0 +1,17 @@
+retrying
+SQLAlchemy
+Flask_SQLAlchemy
+click
+Flask
+pydantic
+pandas
+psutil
+alembic
+flask_migrate
+flask_login
+python-dotenv
+flask_wtf
+pytz
+email-validator
+gunicorn
+gevent
